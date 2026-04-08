@@ -164,7 +164,7 @@ fi
 # Skills
 if [ ! -d "$TARGET_DIR/.claude/skills" ]; then
     cp -r "$KIT_SOURCE/.claude/skills" "$TARGET_DIR/.claude/skills"
-    ok "17 skills instalados"
+    ok "14 skills instalados"
 else
     skip "Pasta .claude/skills ja existe"
 fi

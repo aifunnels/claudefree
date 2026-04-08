@@ -206,7 +206,7 @@ if (-not (Test-Path "$targetDir\.claude\agents")) {
 # Skills
 if (-not (Test-Path "$targetDir\.claude\skills")) {
     Copy-Item -Recurse "$kitSource\.claude\skills" "$targetDir\.claude\skills"
-    Write-Ok "17 skills instalados"
+    Write-Ok "14 skills instalados"
 } else {
     Write-Skip "Pasta .claude\skills ja existe"
 }

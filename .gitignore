@@ -1,0 +1,6 @@
+.vercel
+node_modules/
+config/empresa.md
+output/
+*.env
+.env.*

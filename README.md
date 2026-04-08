@@ -1,6 +1,6 @@
 # ClaudeFree
 
-**14 agentes IA + 17 skills + 50 prompts.** Uma agencia inteira rodando local, gratis.
+**14 agentes IA + 14 skills + 50 prompts.** Uma agencia inteira rodando local, gratis.
 
 OpenClaude + Ollama + Kit Piloto Automatico v29.9.
 
@@ -29,7 +29,7 @@ chmod +x scripts/setup-mac.sh && ./scripts/setup-mac.sh
 | OpenClaude | CLI de coding-agent (clone do Claude Code) |
 | Ollama | LLM local (qwen2.5-coder:7b) |
 | ripgrep | Busca de arquivos (dependencia) |
-| Kit PA v29.9 | 14 agentes + 17 skills + 50 prompts + 3 nichos |
+| Kit PA v29.9 | 14 agentes + 14 skills + 50 prompts + 3 nichos |
 
 ## Iniciar
 
@@ -89,7 +89,7 @@ seu-projeto/
 ├── CLAUDE.md                    <- cerebro do projeto
 ├── .claude/
 │   ├── agents/                  <- 14 agentes
-│   ├── skills/                  <- 17 skills (/comandos)
+│   ├── skills/                  <- 14 skills (/comandos)
 │   └── settings.json            <- config limpa
 ├── clientes/                    <- briefings por cliente
 ├── conhecimento/                <- frameworks, boas praticas, KPIs
