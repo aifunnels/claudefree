@@ -125,7 +125,7 @@ fi
 # ── Step 6: Criar projeto na Area de Trabalho ──
 step "6" "Criando projeto com Kit Piloto Automatico..."
 
-PROJECT_NAME="minha-agencia"
+PROJECT_NAME="minha-empresa"
 DESKTOP="$HOME/Desktop"
 # Fallback pra Linux que pode nao ter ~/Desktop
 [ ! -d "$DESKTOP" ] && DESKTOP="$HOME/Área de Trabalho"

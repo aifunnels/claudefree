@@ -157,7 +157,7 @@ if ($modelExists) {
 # ── Step 6: Criar projeto + Kit PA ──
 Write-Step "6" "Criando projeto com Kit Piloto Automatico..."
 
-$projectName = "minha-agencia"
+$projectName = "minha-empresa"
 $desktopPath = [System.Environment]::GetFolderPath("Desktop")
 $projectDir = Join-Path $desktopPath $projectName
 
