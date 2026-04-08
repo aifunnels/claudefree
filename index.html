@@ -997,6 +997,89 @@ openclaude</pre></div>
   </div>
 </section>
 
+<!-- ═══ PROVIDERS ═══ -->
+<section id="providers">
+  <div class="container">
+    <div class="section-label">PS — Providers</div>
+    <h2 class="section-title gradient-text">Escolha seu provider</h2>
+    <p class="section-subtitle" style="margin-bottom:2.5rem">Voce nao precisa ficar preso a um unico provider. Centralize tudo em uma plataforma ou misture.</p>
+
+    <div class="grid-cards">
+      <div class="grid-card">
+        <div class="card-num mono">Gratis</div>
+        <h3>Ollama (Local)</h3>
+        <p>100% na sua maquina. Sem API key, sem custo, sem enviar dados. Ideal pra comecar e pra privacidade total.</p>
+      </div>
+      <div class="grid-card">
+        <div class="card-num mono">Recomendado</div>
+        <h3>OpenRouter</h3>
+        <p>1 conta, 1 API key, 200+ modelos: GPT-4o, Claude, Gemini, DeepSeek, Llama, Mistral. Hub unico. Crie a key em <strong>openrouter.ai/keys</strong></p>
+      </div>
+      <div class="grid-card">
+        <div class="card-num mono">Alternativa</div>
+        <h3>Apify</h3>
+        <p>Para scraping, extracao de dados e automacao web. Combinado com Ollama ou OpenRouter, cobre 100% das necessidades.</p>
+      </div>
+      <div class="grid-card">
+        <div class="card-num mono">Direto</div>
+        <h3>OpenAI / DeepSeek</h3>
+        <p>Se ja tem API key da OpenAI ou DeepSeek, use direto sem intermediario. Funciona com qualquer endpoint /v1.</p>
+      </div>
+    </div>
+
+    <div class="alert alert-info" style="margin-top:2rem">
+      <div class="alert-icon">Dica</div>
+      <div class="alert-body">
+        <strong>Estrategia recomendada:</strong> Use <strong>Ollama local</strong> pro router (@cos) e tarefas rapidas (custo zero). Use <strong>OpenRouter</strong> pros agentes criativos (@copy, @cmo, @traffic) que precisam de qualidade alta. Melhor custo-beneficio possivel.
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem;color:var(--accent);margin:2.5rem 0 1rem">Configuracao rapida — OpenRouter</h3>
+
+    <div class="os-switcher" data-group="provider">
+      <button class="os-btn active" onclick="switchOS(this,'prov-win')">Windows</button>
+      <button class="os-btn" onclick="switchOS(this,'prov-mac')">macOS / Linux</button>
+    </div>
+    <div id="prov-win" class="os-panel active">
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">powershell</span><span class="code-os">openrouter</span></div>
+        <div class="code-body"><pre><span class="c"># Uma key, todos os modelos</span>
+$env:CLAUDE_CODE_USE_OPENAI="1"
+$env:OPENAI_BASE_URL="https://openrouter.ai/api/v1"
+$env:OPENAI_API_KEY="sk-or-SUA-KEY-OPENROUTER"
+$env:OPENAI_MODEL="deepseek/deepseek-chat-v3-0324"
+
+openclaude --bare</pre></div>
+      </div>
+    </div>
+    <div id="prov-mac" class="os-panel">
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">bash</span><span class="code-os">openrouter</span></div>
+        <div class="code-body"><pre><span class="c"># Uma key, todos os modelos</span>
+export CLAUDE_CODE_USE_OPENAI=1
+export OPENAI_BASE_URL=https://openrouter.ai/api/v1
+export OPENAI_API_KEY=sk-or-SUA-KEY-OPENROUTER
+export OPENAI_MODEL=deepseek/deepseek-chat-v3-0324
+
+openclaude --bare</pre></div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem;color:var(--accent);margin:2rem 0 1rem">Comparativo de custo</h3>
+    <table class="data-table">
+      <thead><tr><th>Modo</th><th>Router</th><th>Agentes</th><th>Custo/mes</th></tr></thead>
+      <tbody>
+        <tr><td>Local</td><td>Ollama 3b</td><td>Ollama 7b</td><td style="color:var(--success)">R$0</td></tr>
+        <tr style="background:var(--glow-strong)"><td>OpenRouter</td><td>Ollama 3b</td><td>Gemini + DeepSeek + GPT-4o-mini</td><td style="color:var(--accent)">~R$5</td></tr>
+        <tr><td>Hibrido</td><td>Ollama 3b</td><td>OpenRouter + Ollama</td><td>~R$3</td></tr>
+        <tr><td>Performance</td><td>Ollama 3b</td><td>GPT-4o + Claude + DeepSeek</td><td>~R$30</td></tr>
+        <tr><td>Direto OpenAI</td><td>Ollama 3b</td><td>GPT-4o-mini</td><td>~R$10</td></tr>
+        <tr><td>Direto DeepSeek</td><td>Ollama 3b</td><td>DeepSeek v3</td><td>~R$2</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
 <!-- ═══ MCP FIX ═══ -->
 <section id="fix">
   <div class="container">

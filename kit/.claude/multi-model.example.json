@@ -1,5 +1,6 @@
 {
   "_comentario": "Nivel 2 — Agent Multi-Model Routing. Copie as secoes relevantes para settings.json",
+  "_nota": "OpenRouter = 1 conta, 1 key, 200+ modelos. Crie em openrouter.ai/keys",
 
   "_modo_1_local_total": "Tudo roda local no Ollama. Custo zero. Ideal pra comecar.",
   "local": {
@@ -30,13 +31,119 @@
     }
   },
 
-  "_modo_2_hibrido": "Router local (rapido), agentes criativos na nuvem (melhor qualidade). Custo baixo.",
+  "_modo_2_openrouter": "UMA key, UMA conta, 200+ modelos. Melhor custo-beneficio.",
+  "openrouter": {
+    "agentModels": {
+      "qwen2.5-coder:3b": {
+        "base_url": "http://localhost:11434/v1"
+      },
+      "google/gemini-2.0-flash-001": {
+        "base_url": "https://openrouter.ai/api/v1",
+        "api_key": "sk-or-SUA-KEY-OPENROUTER"
+      },
+      "deepseek/deepseek-chat-v3-0324": {
+        "base_url": "https://openrouter.ai/api/v1",
+        "api_key": "sk-or-SUA-KEY-OPENROUTER"
+      },
+      "openai/gpt-4o-mini": {
+        "base_url": "https://openrouter.ai/api/v1",
+        "api_key": "sk-or-SUA-KEY-OPENROUTER"
+      }
+    },
+    "agentRouting": {
+      "cos": "qwen2.5-coder:3b",
+      "revisor": "qwen2.5-coder:3b",
+      "ceo": "deepseek/deepseek-chat-v3-0324",
+      "cfo": "deepseek/deepseek-chat-v3-0324",
+      "cmo": "google/gemini-2.0-flash-001",
+      "coo": "deepseek/deepseek-chat-v3-0324",
+      "cso": "deepseek/deepseek-chat-v3-0324",
+      "cpo": "deepseek/deepseek-chat-v3-0324",
+      "cto": "deepseek/deepseek-chat-v3-0324",
+      "chro": "deepseek/deepseek-chat-v3-0324",
+      "copy": "google/gemini-2.0-flash-001",
+      "traffic": "openai/gpt-4o-mini",
+      "carrossel": "google/gemini-2.0-flash-001",
+      "onboarding": "deepseek/deepseek-chat-v3-0324",
+      "default": "deepseek/deepseek-chat-v3-0324"
+    }
+  },
+
+  "_modo_3_hibrido_openrouter": "Router local + nuvem via OpenRouter. Custo baixo, qualidade alta.",
   "hibrido": {
     "agentModels": {
       "qwen2.5-coder:3b": {
         "base_url": "http://localhost:11434/v1"
       },
       "qwen2.5-coder:7b": {
+        "base_url": "http://localhost:11434/v1"
+      },
+      "openai/gpt-4o-mini": {
+        "base_url": "https://openrouter.ai/api/v1",
+        "api_key": "sk-or-SUA-KEY-OPENROUTER"
+      }
+    },
+    "agentRouting": {
+      "cos": "qwen2.5-coder:3b",
+      "revisor": "qwen2.5-coder:3b",
+      "ceo": "openai/gpt-4o-mini",
+      "cfo": "openai/gpt-4o-mini",
+      "cmo": "openai/gpt-4o-mini",
+      "coo": "qwen2.5-coder:7b",
+      "cso": "openai/gpt-4o-mini",
+      "cpo": "qwen2.5-coder:7b",
+      "cto": "qwen2.5-coder:7b",
+      "chro": "qwen2.5-coder:7b",
+      "copy": "openai/gpt-4o-mini",
+      "traffic": "openai/gpt-4o-mini",
+      "carrossel": "qwen2.5-coder:7b",
+      "onboarding": "qwen2.5-coder:7b",
+      "default": "qwen2.5-coder:7b"
+    }
+  },
+
+  "_modo_4_performance": "Tudo na nuvem via OpenRouter. Melhor qualidade. Custo mais alto.",
+  "performance": {
+    "agentModels": {
+      "qwen2.5-coder:3b": {
+        "base_url": "http://localhost:11434/v1"
+      },
+      "openai/gpt-4o": {
+        "base_url": "https://openrouter.ai/api/v1",
+        "api_key": "sk-or-SUA-KEY-OPENROUTER"
+      },
+      "anthropic/claude-sonnet-4": {
+        "base_url": "https://openrouter.ai/api/v1",
+        "api_key": "sk-or-SUA-KEY-OPENROUTER"
+      },
+      "deepseek/deepseek-chat-v3-0324": {
+        "base_url": "https://openrouter.ai/api/v1",
+        "api_key": "sk-or-SUA-KEY-OPENROUTER"
+      }
+    },
+    "agentRouting": {
+      "cos": "qwen2.5-coder:3b",
+      "revisor": "deepseek/deepseek-chat-v3-0324",
+      "ceo": "openai/gpt-4o",
+      "cfo": "openai/gpt-4o",
+      "cmo": "anthropic/claude-sonnet-4",
+      "coo": "deepseek/deepseek-chat-v3-0324",
+      "cso": "openai/gpt-4o",
+      "cpo": "deepseek/deepseek-chat-v3-0324",
+      "cto": "deepseek/deepseek-chat-v3-0324",
+      "chro": "deepseek/deepseek-chat-v3-0324",
+      "copy": "anthropic/claude-sonnet-4",
+      "traffic": "openai/gpt-4o",
+      "carrossel": "anthropic/claude-sonnet-4",
+      "onboarding": "deepseek/deepseek-chat-v3-0324",
+      "default": "deepseek/deepseek-chat-v3-0324"
+    }
+  },
+
+  "_modo_5_direto_openai": "Direto na OpenAI (sem OpenRouter). Se ja tem key OpenAI.",
+  "direto-openai": {
+    "agentModels": {
+      "qwen2.5-coder:3b": {
         "base_url": "http://localhost:11434/v1"
       },
       "gpt-4o-mini": {
@@ -50,28 +157,24 @@
       "ceo": "gpt-4o-mini",
       "cfo": "gpt-4o-mini",
       "cmo": "gpt-4o-mini",
-      "coo": "qwen2.5-coder:7b",
+      "coo": "gpt-4o-mini",
       "cso": "gpt-4o-mini",
-      "cpo": "qwen2.5-coder:7b",
-      "cto": "qwen2.5-coder:7b",
-      "chro": "qwen2.5-coder:7b",
+      "cpo": "gpt-4o-mini",
+      "cto": "gpt-4o-mini",
+      "chro": "gpt-4o-mini",
       "copy": "gpt-4o-mini",
       "traffic": "gpt-4o-mini",
-      "carrossel": "qwen2.5-coder:7b",
-      "onboarding": "qwen2.5-coder:7b",
-      "default": "qwen2.5-coder:7b"
+      "carrossel": "gpt-4o-mini",
+      "onboarding": "gpt-4o-mini",
+      "default": "gpt-4o-mini"
     }
   },
 
-  "_modo_3_performance": "Tudo na nuvem. Melhor qualidade. Custo mais alto.",
-  "performance": {
+  "_modo_6_direto_deepseek": "Direto na DeepSeek. Mais barato que OpenAI.",
+  "direto-deepseek": {
     "agentModels": {
       "qwen2.5-coder:3b": {
         "base_url": "http://localhost:11434/v1"
-      },
-      "gpt-4o": {
-        "base_url": "https://api.openai.com/v1",
-        "api_key": "sk-SUA-KEY-OPENAI"
       },
       "deepseek-chat": {
         "base_url": "https://api.deepseek.com/v1",
@@ -80,16 +183,16 @@
     },
     "agentRouting": {
       "cos": "qwen2.5-coder:3b",
-      "revisor": "deepseek-chat",
-      "ceo": "gpt-4o",
-      "cfo": "gpt-4o",
-      "cmo": "gpt-4o",
+      "revisor": "qwen2.5-coder:3b",
+      "ceo": "deepseek-chat",
+      "cfo": "deepseek-chat",
+      "cmo": "deepseek-chat",
       "coo": "deepseek-chat",
-      "cso": "gpt-4o",
+      "cso": "deepseek-chat",
       "cpo": "deepseek-chat",
       "cto": "deepseek-chat",
       "chro": "deepseek-chat",
-      "copy": "gpt-4o",
+      "copy": "deepseek-chat",
       "traffic": "deepseek-chat",
       "carrossel": "deepseek-chat",
       "onboarding": "deepseek-chat",

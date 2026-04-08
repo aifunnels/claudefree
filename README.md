@@ -70,15 +70,29 @@ Dentro do OpenClaude: `/setup-empresa`
 | @revisor | Revisao de qualidade (score 0-100) |
 | @onboarding | Integracao de novos clientes |
 
+## Providers — Escolha o seu
+
+| Provider | Vantagem | Como usar |
+|----------|----------|-----------|
+| **Ollama (local)** | Gratis, 100% local, sem API key | Ja vem configurado |
+| **OpenRouter** | 1 conta = 200+ modelos (GPT-4o, Claude, Gemini, DeepSeek) | Crie key em openrouter.ai/keys |
+| **OpenAI direto** | Se ja tem key OpenAI | Coloque a key no config |
+| **DeepSeek direto** | Mais barato que OpenAI | Coloque a key no config |
+
+> **Recomendacao:** Use **OpenRouter** como hub unico. Uma conta, uma key, acesso a todos os modelos. Ou **Ollama** se quer custo zero.
+
 ## Multi-Model Routing
 
-3 modos de operacao:
+6 modos de operacao:
 
 | Modo | Router | Agentes | Custo |
 |------|--------|---------|-------|
 | Local | Ollama 3b | Ollama 7b | R$0 |
-| Hibrido | Ollama 3b | GPT-4o-mini + Ollama 7b | ~R$5/mes |
-| Performance | Ollama 3b | GPT-4o + DeepSeek | ~R$30/mes |
+| OpenRouter | Ollama 3b | Gemini Flash + DeepSeek + GPT-4o-mini | ~R$5/mes |
+| Hibrido | Ollama 3b | GPT-4o-mini (OpenRouter) + Ollama 7b | ~R$3/mes |
+| Performance | Ollama 3b | GPT-4o + Claude Sonnet + DeepSeek | ~R$30/mes |
+| Direto OpenAI | Ollama 3b | GPT-4o-mini | ~R$10/mes |
+| Direto DeepSeek | Ollama 3b | DeepSeek Chat v3 | ~R$2/mes |
 
 Config em `kit/.claude/multi-model.example.json`
 
