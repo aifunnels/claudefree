@@ -1,0 +1,89 @@
+{
+  "_comentario": "Nivel 2 — Agent Multi-Model Routing. Copie as secoes relevantes para settings.json",
+
+  "_modo_1_local_total": "Tudo roda local no Ollama. Custo zero. Ideal pra comecar.",
+  "local": {
+    "agentModels": {
+      "qwen2.5-coder:3b": {
+        "base_url": "http://localhost:11434/v1"
+      },
+      "qwen2.5-coder:7b": {
+        "base_url": "http://localhost:11434/v1"
+      }
+    },
+    "agentRouting": {
+      "cos": "qwen2.5-coder:3b",
+      "revisor": "qwen2.5-coder:3b",
+      "ceo": "qwen2.5-coder:7b",
+      "cfo": "qwen2.5-coder:7b",
+      "cmo": "qwen2.5-coder:7b",
+      "coo": "qwen2.5-coder:7b",
+      "cso": "qwen2.5-coder:7b",
+      "cpo": "qwen2.5-coder:7b",
+      "cto": "qwen2.5-coder:7b",
+      "chro": "qwen2.5-coder:7b",
+      "copy": "qwen2.5-coder:7b",
+      "traffic": "qwen2.5-coder:7b",
+      "carrossel": "qwen2.5-coder:7b",
+      "onboarding": "qwen2.5-coder:7b",
+      "default": "qwen2.5-coder:7b"
+    }
+  },
+
+  "_modo_2_hibrido": "Router local (rapido), agentes criativos na nuvem (melhor qualidade). Custo baixo.",
+  "hibrido": {
+    "agentModels": {
+      "qwen2.5-coder:3b": {
+        "base_url": "http://localhost:11434/v1"
+      },
+      "qwen2.5-coder:7b": {
+        "base_url": "http://localhost:11434/v1"
+      },
+      "gpt-4o-mini": {
+        "base_url": "https://api.openai.com/v1",
+        "api_key": "sk-SUA-KEY-OPENAI"
+      }
+    },
+    "agentRouting": {
+      "cos": "qwen2.5-coder:3b",
+      "revisor": "qwen2.5-coder:3b",
+      "ceo": "gpt-4o-mini",
+      "cfo": "gpt-4o-mini",
+      "cmo": "gpt-4o-mini",
+      "copy": "gpt-4o-mini",
+      "traffic": "gpt-4o-mini",
+      "carrossel": "qwen2.5-coder:7b",
+      "onboarding": "qwen2.5-coder:7b",
+      "default": "qwen2.5-coder:7b"
+    }
+  },
+
+  "_modo_3_performance": "Tudo na nuvem. Melhor qualidade. Custo mais alto.",
+  "performance": {
+    "agentModels": {
+      "qwen2.5-coder:3b": {
+        "base_url": "http://localhost:11434/v1"
+      },
+      "gpt-4o": {
+        "base_url": "https://api.openai.com/v1",
+        "api_key": "sk-SUA-KEY-OPENAI"
+      },
+      "deepseek-chat": {
+        "base_url": "https://api.deepseek.com/v1",
+        "api_key": "sk-SUA-KEY-DEEPSEEK"
+      }
+    },
+    "agentRouting": {
+      "cos": "qwen2.5-coder:3b",
+      "revisor": "deepseek-chat",
+      "ceo": "gpt-4o",
+      "cfo": "gpt-4o",
+      "cmo": "gpt-4o",
+      "copy": "gpt-4o",
+      "traffic": "deepseek-chat",
+      "carrossel": "deepseek-chat",
+      "onboarding": "deepseek-chat",
+      "default": "deepseek-chat"
+    }
+  }
+}

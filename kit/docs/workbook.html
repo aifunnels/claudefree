@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kit Piloto Automatico V29.9</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --white: #ffffff;
+  --gray-50: #fafafa;
+  --gray-100: #f5f5f5;
+  --gray-200: #e5e5e5;
+  --gray-300: #d4d4d4;
+  --gray-400: #a3a3a3;
+  --gray-500: #737373;
+  --gray-600: #525252;
+  --gray-700: #404040;
+  --gray-800: #262626;
+  --gray-900: #171717;
+  --gray-950: #0a0a0a;
+  --black: #000000;
+  --glass-bg: rgba(255,255,255,0.03);
+  --glass-border: rgba(255,255,255,0.06);
+  --glass-hover: rgba(255,255,255,0.08);
+  --glass-glow: rgba(255,255,255,0.12);
+  --radius: 20px;
+  --radius-sm: 12px;
+  --radius-xs: 8px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--black);
+  color: var(--gray-300);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Noise texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrapper {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 80px 32px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Typography */
+h1 {
+  font-size: 3.2em;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--white);
+  line-height: 1.1;
+}
+h2 {
+  font-size: 1.6em;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  margin: 96px 0 16px;
+}
+h3 {
+  font-size: 0.95em;
+  font-weight: 600;
+  color: var(--gray-200);
+  letter-spacing: -0.01em;
+}
+p.lead {
+  font-size: 1.15em;
+  color: var(--gray-500);
+  font-weight: 300;
+  margin-top: 16px;
+  letter-spacing: -0.01em;
+}
+.section-desc {
+  color: var(--gray-500);
+  font-size: 0.92em;
+  margin-bottom: 32px;
+  font-weight: 300;
+}
+
+/* Glass card */
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glass:hover {
+  background: var(--glass-hover);
+  border-color: var(--glass-glow);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 8px 40px rgba(0,0,0,0.3);
+}
+
+/* Stats hero */
+.stats-hero {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1px;
+  background: var(--glass-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin: 48px 0;
+}
+.stat-item {
+  background: var(--gray-950);
+  padding: 32px 16px;
+  text-align: center;
+}
+.stat-item:hover { background: rgba(255,255,255,0.02); }
+.stat-num {
+  font-size: 2.4em;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.stat-lbl {
+  font-size: 0.72em;
+  color: var(--gray-500);
+  margin-top: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+
+/* Flow steps */
+.flow-track {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  margin: 32px 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.flow-node {
+  flex: 1;
+  background: var(--gray-950);
+  padding: 28px 20px;
+  text-align: center;
+  position: relative;
+}
+.flow-node::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 8px solid var(--gray-700);
+  z-index: 2;
+}
+.flow-node:last-child::after { display: none; }
+.flow-node.active { background: rgba(255,255,255,0.05); }
+.flow-tag {
+  font-size: 0.65em;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gray-600);
+  font-weight: 600;
+}
+.flow-title {
+  font-weight: 600;
+  color: var(--white);
+  font-size: 0.9em;
+  margin: 8px 0 4px;
+}
+.flow-sub {
+  font-size: 0.78em;
+  color: var(--gray-500);
+}
+
+/* Token bar */
+.token-widget {
+  padding: 40px;
+  margin: 32px 0;
+}
+.token-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 12px 0;
+}
+.token-label {
+  width: 100px;
+  font-size: 0.82em;
+  color: var(--gray-500);
+  text-align: right;
+  font-weight: 500;
+}
+.token-track {
+  flex: 1;
+  height: 36px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 18px;
+  overflow: hidden;
+}
+.token-fill {
+  height: 100%;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  font-size: 0.75em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.token-bad {
+  background: linear-gradient(90deg, var(--gray-700), var(--gray-600));
+  color: var(--gray-300);
+}
+.token-good {
+  background: linear-gradient(90deg, var(--white), var(--gray-200));
+  color: var(--black);
+}
+.token-result {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 1.1em;
+  color: var(--white);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* Agent grid */
+.agent-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+.agent-card {
+  padding: 24px;
+  cursor: default;
+}
+.agent-name {
+  font-family: 'SF Mono', 'Cascadia Code', monospace;
+  font-size: 0.88em;
+  color: var(--white);
+  font-weight: 600;
+}
+.agent-role {
+  display: inline-block;
+  font-size: 0.68em;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gray-500);
+  border: 1px solid var(--glass-border);
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-left: 8px;
+  font-weight: 500;
+}
+.agent-desc {
+  font-size: 0.82em;
+  color: var(--gray-500);
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+/* Skills table */
+.skills-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.skills-table th {
+  font-size: 0.7em;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gray-600);
+  font-weight: 600;
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--glass-border);
+}
+.skills-table td {
+  padding: 14px 16px;
+  font-size: 0.88em;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  color: var(--gray-400);
+}
+.skills-table tr:hover td { background: rgba(255,255,255,0.02); }
+.skill-cmd {
+  font-family: 'SF Mono', 'Cascadia Code', monospace;
+  color: var(--white);
+  font-weight: 500;
+  font-size: 0.85em;
+}
+.pill {
+  display: inline-block;
+  font-size: 0.68em;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-weight: 600;
+  background: rgba(255,255,255,0.05);
+  color: var(--gray-400);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Tree */
+.tree-widget {
+  padding: 32px;
+  font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
+  font-size: 0.82em;
+  line-height: 2;
+  overflow-x: auto;
+}
+.tree-widget .f { color: var(--gray-400); }
+.tree-widget .d { color: var(--white); font-weight: 600; }
+.tree-widget .c { color: var(--gray-600); font-style: italic; }
+.tree-widget .h { color: var(--white); }
+
+/* Content cards */
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.content-card { padding: 28px; }
+.content-card h3 { margin-bottom: 16px; }
+.content-card ul {
+  list-style: none;
+  margin: 0;
+}
+.content-card li {
+  font-size: 0.82em;
+  color: var(--gray-500);
+  padding: 5px 0;
+  padding-left: 16px;
+  position: relative;
+}
+.content-card li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 12px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--gray-600);
+}
+
+/* 7 days */
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin: 32px 0;
+}
+.day-cell {
+  background: var(--gray-950);
+  padding: 24px 12px;
+  text-align: center;
+}
+.day-cell:hover { background: rgba(255,255,255,0.03); }
+.day-num {
+  font-size: 2em;
+  font-weight: 700;
+  color: var(--gray-700);
+  line-height: 1;
+}
+.day-task {
+  font-size: 0.75em;
+  color: var(--gray-500);
+  margin-top: 12px;
+  line-height: 1.4;
+}
+.day-cmd {
+  font-family: 'SF Mono', monospace;
+  font-size: 0.7em;
+  color: var(--gray-400);
+  margin-top: 8px;
+  background: rgba(255,255,255,0.04);
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Router table */
+.router-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.router-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  font-size: 0.88em;
+}
+.router-table td:first-child {
+  color: var(--gray-400);
+  font-style: italic;
+}
+.router-table td:last-child {
+  font-family: 'SF Mono', monospace;
+  color: var(--white);
+  font-weight: 500;
+  text-align: right;
+}
+.router-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* DNA cards */
+.dna-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.dna-card { padding: 28px; }
+.dna-card h3 { margin-bottom: 12px; font-size: 0.88em; }
+.dna-card p { font-size: 0.8em; color: var(--gray-500); line-height: 1.55; }
+.dna-card .dna-list {
+  list-style: none;
+  margin-top: 14px;
+}
+.dna-card .dna-list li {
+  font-size: 0.78em;
+  color: var(--gray-500);
+  padding: 4px 0;
+  padding-left: 14px;
+  position: relative;
+}
+.dna-card .dna-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--gray-600);
+}
+.dna-highlight {
+  display: block;
+  margin-top: 14px;
+  font-size: 0.78em;
+  color: var(--white);
+  font-weight: 500;
+}
+
+/* Style rules */
+.style-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 32px 0;
+}
+.style-card { padding: 28px; }
+.style-card h3 { margin-bottom: 16px; }
+.style-card ul { list-style: none; }
+.style-card li {
+  font-size: 0.82em;
+  color: var(--gray-500);
+  padding: 6px 0;
+  padding-left: 24px;
+  position: relative;
+}
+.style-card li::before {
+  position: absolute;
+  left: 0;
+  font-size: 0.9em;
+}
+.style-no li::before { content: '\2715'; color: var(--gray-600); }
+.style-yes li::before { content: '\2713'; color: var(--gray-400); }
+
+/* Compare table */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+}
+.compare-table th {
+  font-size: 0.7em;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 12px 20px;
+  text-align: left;
+  border-bottom: 1px solid var(--glass-border);
+}
+.compare-table th:first-child { color: var(--gray-600); }
+.compare-table th:last-child { color: var(--gray-400); }
+.compare-table td {
+  padding: 16px 20px;
+  font-size: 0.88em;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  vertical-align: top;
+  line-height: 1.5;
+}
+.compare-table td:first-child { color: var(--gray-600); }
+.compare-table td:last-child { color: var(--gray-300); }
+
+/* Accent widget */
+.accent-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 32px 0;
+}
+.accent-card {
+  padding: 40px 28px;
+  text-align: center;
+}
+.accent-label {
+  font-size: 0.7em;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gray-600);
+  font-weight: 600;
+}
+.accent-value {
+  font-size: 1.6em;
+  font-weight: 700;
+  margin: 12px 0 8px;
+  letter-spacing: -0.03em;
+}
+.accent-sub {
+  font-size: 0.78em;
+  color: var(--gray-600);
+}
+
+/* Note */
+.note {
+  padding: 20px 24px;
+  border-left: 2px solid var(--gray-800);
+  margin: 32px 0;
+  font-size: 0.88em;
+  color: var(--gray-500);
+}
+.note strong { color: var(--gray-300); font-weight: 600; }
+
+/* Divider */
+.sep {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  margin: 0;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 80px 0 40px;
+  color: var(--gray-700);
+  font-size: 0.78em;
+  letter-spacing: 0.02em;
+}
+.footer-brand {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--gray-500);
+  letter-spacing: -0.02em;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .wrapper { padding: 40px 20px; }
+  h1 { font-size: 2.2em; }
+  .stats-hero { grid-template-columns: repeat(3, 1fr); }
+  .flow-track { flex-direction: column; }
+  .flow-node::after { display: none; }
+  .agent-grid { grid-template-columns: 1fr; }
+  .content-grid { grid-template-columns: 1fr; }
+  .dna-grid { grid-template-columns: 1fr; }
+  .style-split { grid-template-columns: 1fr; }
+  .accent-split { grid-template-columns: 1fr; }
+  .days-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+@page {
+  size: A4;
+  margin: 0;
+}
+@media print {
+  body {
+    background: var(--black) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  body::before { display: none; }
+  .wrapper { padding: 48px 40px; }
+  .glass {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(255,255,255,0.04) !important;
+  }
+  .stat-item, .flow-node, .day-cell {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    background: var(--gray-950) !important;
+  }
+  .token-fill {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .agent-grid { grid-template-columns: repeat(2, 1fr); }
+  .dna-grid { grid-template-columns: repeat(2, 1fr); }
+  .days-grid { grid-template-columns: repeat(7, 1fr); }
+  h2 { page-break-after: avoid; }
+  .glass, .stats-hero, .flow-track, .days-grid { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<!-- Hero -->
+<h1>Kit Piloto<br>Automatico</h1>
+<p class="lead">Seu negocio inteiro rodando com IA... da estrategia ao post publicado</p>
+<div style="margin-top:12px; font-size:0.82em; color:var(--gray-600);">V29.9</div>
+
+<!-- Stats -->
+<div class="stats-hero">
+  <div class="stat-item"><div class="stat-num">14</div><div class="stat-lbl">Agentes</div></div>
+  <div class="stat-item"><div class="stat-num">14</div><div class="stat-lbl">Skills</div></div>
+  <div class="stat-item"><div class="stat-num">50</div><div class="stat-lbl">Prompts</div></div>
+  <div class="stat-item"><div class="stat-num">17</div><div class="stat-lbl">Templates</div></div>
+  <div class="stat-item"><div class="stat-num">3</div><div class="stat-lbl">Nichos</div></div>
+  <div class="stat-item"><div class="stat-num">55</div><div class="stat-lbl">Knowledge</div></div>
+</div>
+
+<!-- Getting Started -->
+<h2>Getting Started</h2>
+<p class="section-desc">Abra o Claude Code na pasta do kit... tudo acontece automaticamente</p>
+
+<div class="flow-track">
+  <div class="flow-node active">
+    <div class="flow-tag">Passo 1</div>
+    <div class="flow-title">Abra o Claude Code</div>
+    <div class="flow-sub">na pasta do kit</div>
+  </div>
+  <div class="flow-node">
+    <div class="flow-tag">Automatico</div>
+    <div class="flow-title">/setup-empresa</div>
+    <div class="flow-sub">6 perguntas rapidas</div>
+  </div>
+  <div class="flow-node">
+    <div class="flow-tag">Passo 2</div>
+    <div class="flow-title">Perfil criado</div>
+    <div class="flow-sub">config/empresa.md</div>
+  </div>
+  <div class="flow-node">
+    <div class="flow-tag">Pronto</div>
+    <div class="flow-title">Comece a usar</div>
+    <div class="flow-sub">fale o que precisa...</div>
+  </div>
+</div>
+
+<div class="note">
+  <strong>Como funciona?</strong> Voce fala em linguagem natural... o Chief of Staff (@cos) entende e roteia pro agente certo. Sem decorar comandos.
+</div>
+
+<!-- Token Economy -->
+<h2>Token Economy</h2>
+<p class="section-desc">Cada interacao consome uma fracao do que outros kits gastam</p>
+
+<div class="glass token-widget">
+  <div class="token-row">
+    <span class="token-label">Kit antigo</span>
+    <div class="token-track"><div class="token-fill token-bad" style="width:100%">~130.000 tokens</div></div>
+  </div>
+  <div class="token-row">
+    <span class="token-label">V29.9</span>
+    <div class="token-track"><div class="token-fill token-good" style="width:3.5%">~4k</div></div>
+  </div>
+  <div class="token-result">30-50 interacoes/dia no plano Pro</div>
+</div>
+
+<!-- Agents -->
+<h2>Agentes</h2>
+<p class="section-desc">Fale com qualquer um usando @nome ou deixe o @cos rotear</p>
+
+<div class="agent-grid">
+  <div class="glass agent-card"><div class="agent-name">@cos</div><span class="agent-role">Router</span><div class="agent-desc">Entende o que voce precisa e manda pro agente certo</div></div>
+  <div class="glass agent-card"><div class="agent-name">@ceo</div><span class="agent-role">Estrategia</span><div class="agent-desc">SWOT, Porter, OKRs, roadmap, visao 12 meses</div></div>
+  <div class="glass agent-card"><div class="agent-name">@cfo</div><span class="agent-role">Financas</span><div class="agent-desc">Fluxo de caixa, margem, forecast 3 cenarios</div></div>
+  <div class="glass agent-card"><div class="agent-name">@cmo</div><span class="agent-role">Marketing</span><div class="agent-desc">Canais, calendario editorial, SEO, concorrencia</div></div>
+  <div class="glass agent-card"><div class="agent-name">@cso</div><span class="agent-role">Vendas</span><div class="agent-desc">Pipeline, SPIN, Social Selling, forecast</div></div>
+  <div class="glass agent-card"><div class="agent-name">@coo</div><span class="agent-role">Operacoes</span><div class="agent-desc">Processos, SOPs, automacao, capacidade</div></div>
+  <div class="glass agent-card"><div class="agent-name">@cpo</div><span class="agent-role">Produto</span><div class="agent-desc">Discovery, RICE, UX audit, growth metrics</div></div>
+  <div class="glass agent-card"><div class="agent-name">@cto</div><span class="agent-role">Tech</span><div class="agent-desc">Arquitetura, OWASP, tech debt, CI/CD</div></div>
+  <div class="glass agent-card"><div class="agent-name">@chro</div><span class="agent-role">Pessoas</span><div class="agent-desc">Recrutamento, onboarding, PDI, avaliacao</div></div>
+  <div class="glass agent-card"><div class="agent-name">@copy</div><span class="agent-role">Copy</span><div class="agent-desc">Headlines, ads, emails... DRE, 4 U's, Judo</div></div>
+  <div class="glass agent-card"><div class="agent-name">@traffic</div><span class="agent-role">Trafego</span><div class="agent-desc">Meta Ads, Google Ads, escala, benchmarks</div></div>
+  <div class="glass agent-card"><div class="agent-name">@revisor</div><span class="agent-role">QA</span><div class="agent-desc">Checklist + score 0-100 em qualquer output</div></div>
+  <div class="glass agent-card"><div class="agent-name">@onboarding</div><span class="agent-role">Clientes</span><div class="agent-desc">Boas-vindas, acessos, briefing, plano 30d</div></div>
+  <div class="glass agent-card"><div class="agent-name">@carrossel</div><span class="agent-role">Visual</span><div class="agent-desc">Copy + design HTML + revisao pronto pra postar</div></div>
+</div>
+
+<!-- Skills -->
+<h2>Skills</h2>
+<p class="section-desc">Digite / e o nome pra executar</p>
+
+<div class="glass" style="border-radius:var(--radius); overflow:hidden;">
+<table class="skills-table">
+  <thead><tr><th>Comando</th><th>O que faz</th><th>Tipo</th></tr></thead>
+  <tbody>
+    <tr><td><span class="skill-cmd">/setup-empresa</span></td><td>Configura perfil do negocio</td><td><span class="pill">Wizard</span></td></tr>
+    <tr><td><span class="skill-cmd">/briefing-cliente</span></td><td>Briefing padronizado de novo cliente</td><td><span class="pill">Coleta</span></td></tr>
+    <tr><td><span class="skill-cmd">/criar-criativo</span></td><td>Copy + briefing visual pra anuncios</td><td><span class="pill">Producao</span></td></tr>
+    <tr><td><span class="skill-cmd">/criar-carrossel</span></td><td>Carrossel completo end-to-end</td><td><span class="pill">Producao</span></td></tr>
+    <tr><td><span class="skill-cmd">/report-semanal</span></td><td>Relatorio de performance</td><td><span class="pill">Report</span></td></tr>
+    <tr><td><span class="skill-cmd">/criar-imagem</span></td><td>HTML/CSS para PNG</td><td><span class="pill">Visual</span></td></tr>
+    <tr><td><span class="skill-cmd">/gerar-imagem-ia</span></td><td>Imagem com IA</td><td><span class="pill">Visual</span></td></tr>
+    <tr><td><span class="skill-cmd">/buscar-imagem</span></td><td>Screenshots e busca web</td><td><span class="pill">Visual</span></td></tr>
+    <tr><td><span class="skill-cmd">/design-template</span></td><td>Templates visuais personalizados</td><td><span class="pill">Visual</span></td></tr>
+    <tr><td><span class="skill-cmd">/design-canva</span></td><td>Criar e exportar do Canva</td><td><span class="pill">Visual</span></td></tr>
+    <tr><td><span class="skill-cmd">/publicar-instagram</span></td><td>Publicar carrossel no IG</td><td><span class="pill">Publish</span></td></tr>
+    <tr><td><span class="skill-cmd">/publicar-social</span></td><td>Multi-plataforma via Blotato</td><td><span class="pill">Publish</span></td></tr>
+    <tr><td><span class="skill-cmd">/enviar-email</span></td><td>Emails via Resend</td><td><span class="pill">Publish</span></td></tr>
+    <tr><td><span class="skill-cmd">/scraping</span></td><td>Dados de sites e redes sociais</td><td><span class="pill">Data</span></td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- Folder Structure -->
+<h2>Estrutura</h2>
+<p class="section-desc">Tudo organizado pra carregar so o que precisa</p>
+
+<div class="glass tree-widget">
+<span class="h">kit_piloto_automatico_V29.9/</span><br>
+&ensp;<span class="h">CLAUDE.md</span> <span class="c">cerebro do kit (1.1KB)</span><br>
+&ensp;<span class="d">.claude/</span><br>
+&ensp;&ensp;<span class="d">agents/</span> <span class="c">14 agentes</span><br>
+&ensp;&ensp;<span class="d">skills/</span> <span class="c">14 skills</span><br>
+&ensp;<span class="d">config/</span> <span class="c">perfil do negocio</span><br>
+&ensp;<span class="d">clientes/</span> <span class="c">briefings por cliente</span><br>
+&ensp;<span class="d">conhecimento/</span> <span class="c">sob demanda</span><br>
+&ensp;&ensp;<span class="f">frameworks/ boas-praticas/ kpis/ qualidade/ exemplos/</span><br>
+&ensp;<span class="d">prompts/</span> <span class="c">50 prompts em 5 categorias</span><br>
+&ensp;<span class="d">templates/</span> <span class="c">17 templates por segmento</span><br>
+&ensp;<span class="d">nichos/</span> <span class="c">advocacia, b2b, clinicas</span><br>
+&ensp;<span class="d">output/</span> <span class="c">tudo que voce produzir</span><br>
+&ensp;<span class="d">docs/</span> <span class="c">FAQ, glossario, troubleshooting</span>
+</div>
+
+<!-- Content -->
+<h2>Conteudo Incluido</h2>
+
+<div class="content-grid">
+  <div class="glass content-card">
+    <h3>50 Prompts</h3>
+    <ul>
+      <li>01-briefing (10 prompts de coleta)</li>
+      <li>02-criacao (10 prompts de producao)</li>
+      <li>03-revisao (10 prompts de QA)</li>
+      <li>04-relatorio (10 prompts de report)</li>
+      <li>05-whatsapp (10 prompts de atendimento)</li>
+    </ul>
+  </div>
+  <div class="glass content-card">
+    <h3>17 Templates</h3>
+    <ul>
+      <li>Geral: onboarding, proposta comercial</li>
+      <li>Gestor Trafego: briefing, relatorio, midia, criativos</li>
+      <li>Social Media: calendario, briefing, stories, engajamento</li>
+      <li>Designer: briefing visual, proposta, checklist, revisao</li>
+      <li>Videomaker: roteiro, storyboard, checklist</li>
+    </ul>
+  </div>
+  <div class="glass content-card">
+    <h3>3 Nichos</h3>
+    <ul>
+      <li>Advocacia: contexto juridico + prompts + templates</li>
+      <li>B2B / SaaS: linguagem corporativa + pipeline</li>
+      <li>Clinicas: compliance saude + captacao pacientes</li>
+    </ul>
+  </div>
+  <div class="glass content-card">
+    <h3>22 Boas Praticas</h3>
+    <ul>
+      <li>Instagram: feed, reels, stories</li>
+      <li>LinkedIn, YouTube, Twitter/X</li>
+      <li>Email: newsletter, vendas</li>
+      <li>WhatsApp, Blog, SEO, Copywriting, Design</li>
+    </ul>
+  </div>
+</div>
+
+<!-- 7 Days -->
+<h2>Primeiros 7 Dias</h2>
+
+<div class="days-grid">
+  <div class="day-cell"><div class="day-num">1</div><div class="day-task">Configurar perfil</div><div class="day-cmd">/setup-empresa</div></div>
+  <div class="day-cell"><div class="day-num">2</div><div class="day-task">Primeiro cliente</div><div class="day-cmd">/briefing-cliente</div></div>
+  <div class="day-cell"><div class="day-num">3</div><div class="day-task">3 criativos</div><div class="day-cmd">/criar-criativo</div></div>
+  <div class="day-cell"><div class="day-num">4</div><div class="day-task">Carrossel</div><div class="day-cmd">/criar-carrossel</div></div>
+  <div class="day-cell"><div class="day-num">5</div><div class="day-task">Calendario editorial</div><div class="day-cmd">@cmo</div></div>
+  <div class="day-cell"><div class="day-num">6</div><div class="day-task">Campanha trafego</div><div class="day-cmd">@traffic</div></div>
+  <div class="day-cell"><div class="day-num">7</div><div class="day-task">Report semanal</div><div class="day-cmd">/report-semanal</div></div>
+</div>
+
+<!-- Router -->
+<h2>Roteamento Inteligente</h2>
+<p class="section-desc">Fale em linguagem natural... o @cos roteia automaticamente</p>
+
+<div class="glass" style="border-radius:var(--radius); overflow:hidden;">
+<table class="router-table">
+  <tr><td>"preciso vender mais"</td><td>@cso</td></tr>
+  <tr><td>"meu caixa ta apertado"</td><td>@cfo</td></tr>
+  <tr><td>"quero mais clientes"</td><td>@cmo</td></tr>
+  <tr><td>"ta tudo uma bagunca"</td><td>@coo</td></tr>
+  <tr><td>"preciso de um anuncio"</td><td>@copy</td></tr>
+  <tr><td>"monta um carrossel"</td><td>@carrossel</td></tr>
+  <tr><td>"pra onde eu vou?"</td><td>@ceo</td></tr>
+  <tr><td>"preciso contratar"</td><td>@chro</td></tr>
+</table>
+</div>
+
+<!-- Copy DNA -->
+<h2>Copy DNA</h2>
+<p class="section-desc">Frameworks de direct response profissional... nao copy generica de IA</p>
+
+<div class="dna-grid">
+  <div class="glass dna-card">
+    <h3>DRE</h3>
+    <p>Emocao Dominante Residual... escale a dor em 5 niveis</p>
+    <ul class="dna-list">
+      <li>Funcional</li>
+      <li>Emocional</li>
+      <li>Social</li>
+      <li>Relacional</li>
+      <li>Identidade</li>
+    </ul>
+    <span class="dna-highlight">Copy converte nos niveis 4-5</span>
+  </div>
+  <div class="glass dna-card">
+    <h3>4 U's</h3>
+    <p>Filtro de qualidade pra headlines e CTAs</p>
+    <ul class="dna-list">
+      <li>Urgencia</li>
+      <li>Utilidade</li>
+      <li>Unicidade</li>
+      <li>Ultra-especificidade</li>
+    </ul>
+    <span class="dna-highlight">Minimo 10/16 pra publicar</span>
+  </div>
+  <div class="glass dna-card">
+    <h3>Tecnica Judo</h3>
+    <p>Transforme objecoes em prova</p>
+    <div style="margin-top:14px; padding:14px; background:rgba(255,255,255,0.03); border-radius:var(--radius-xs); font-size:0.8em; color:var(--gray-400); font-style:italic; line-height:1.5;">
+      "Voce tem razao em desconfiar... por isso trouxemos os extratos de 12 clientes"
+    </div>
+  </div>
+  <div class="glass dna-card">
+    <h3>4 Pernas</h3>
+    <p>Credibilidade que sustenta a copy</p>
+    <ul class="dna-list">
+      <li>Grande Ideia unificadora</li>
+      <li>Promessa + argumento logico</li>
+      <li>Prova ampla</li>
+      <li>Credibilidade do provedor</li>
+    </ul>
+    <span class="dna-highlight">Falta 1 perna... a copy cai</span>
+  </div>
+  <div class="glass dna-card">
+    <h3>6 Leads</h3>
+    <p>Abertura pela consciencia do leitor</p>
+    <ul class="dna-list">
+      <li>Oferta direta</li>
+      <li>Promessa</li>
+      <li>Problema-Solucao</li>
+      <li>Grande Segredo</li>
+      <li>Revelacao</li>
+      <li>Historia</li>
+    </ul>
+  </div>
+  <div class="glass dna-card">
+    <h3>6 Pilares</h3>
+    <p>Oferta irresistivel completa</p>
+    <ul class="dna-list">
+      <li>Ancoragem de preco</li>
+      <li>Stack de valor 5-10x</li>
+      <li>Bonus tangivel</li>
+      <li>Garantia risk-reversal</li>
+      <li>Urgencia real</li>
+      <li>Justificativa</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Writing Style -->
+<h2>Estilo de Escrita</h2>
+<p class="section-desc">Sangue humano em toda copy produzida pelo kit</p>
+
+<div class="style-split">
+  <div class="glass style-card style-no">
+    <h3 style="color:var(--gray-500)">Nunca</h3>
+    <ul>
+      <li>Travessoes na copy final</li>
+      <li>Ponto final em posts e criativos</li>
+      <li>Tom de robo ou agencia generica</li>
+      <li>"Talvez", "pode ser", "quem sabe"</li>
+      <li>Copy sem acentuacao completa</li>
+    </ul>
+  </div>
+  <div class="glass style-card style-yes">
+    <h3 style="color:var(--gray-200)">Sempre</h3>
+    <ul>
+      <li>Reticencias no lugar de pontos finais</li>
+      <li>Fluido como livro... frase puxa frase</li>
+      <li>Assertivo e agressivo na conversao</li>
+      <li>Confianca absoluta no que diz</li>
+      <li>Acentos completos em toda copy final</li>
+    </ul>
+  </div>
+</div>
+
+<div class="glass" style="border-radius:var(--radius); overflow:hidden;">
+<table class="compare-table">
+  <thead><tr><th>Errado</th><th>Certo</th></tr></thead>
+  <tbody>
+    <tr><td>Descubra como aumentar suas vendas com nossa metodologia comprovada.</td><td>37 clientes em 14 dias... usando um m&eacute;todo que seu concorrente ainda n&atilde;o descobriu</td></tr>
+    <tr><td>N&oacute;s ajudamos empresas a crescerem &mdash; entre em contato para saber mais.</td><td>enquanto voc&ecirc; pensa se funciona... seus concorrentes j&aacute; est&atilde;o aplicando</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- Accent Rule -->
+<h2>Acentuacao</h2>
+
+<div class="accent-split">
+  <div class="glass accent-card">
+    <div class="accent-label">Arquivos de Config</div>
+    <div class="accent-value" style="color:var(--gray-600);">SEM acentos</div>
+    <div class="accent-sub">Agentes, skills, CLAUDE.md</div>
+  </div>
+  <div class="glass accent-card" style="border-color: rgba(255,255,255,0.12);">
+    <div class="accent-label">Copy Final</div>
+    <div class="accent-value" style="color:var(--white);">COM acentos</div>
+    <div class="accent-sub">Posts, criativos, captions, emails</div>
+  </div>
+</div>
+
+<div class="note">
+  <strong>Inegociavel:</strong> Copy sem cedilha, til ou acentos parece amadora. O kit garante acentuacao perfeita em todo output que o publico vai ver.
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <div class="footer-brand">Kit Piloto Automatico V29.9</div>
+  <div style="margin-top:12px;">14 agentes &middot; 14 skills &middot; 50 prompts &middot; 17 templates &middot; 3 nichos &middot; 55 knowledge files</div>
+  <div style="margin-top:4px;">992KB de pura inteligencia... zero desperdicio de token</div>
+</div>
+
+</div>
+</body>
+</html>
