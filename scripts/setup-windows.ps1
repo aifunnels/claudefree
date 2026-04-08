@@ -196,11 +196,33 @@ if (Test-Path $projectDir) {
 '@
     Set-Content -Path "$projectDir\.claude\settings.json" -Value $settingsContent -Encoding UTF8
 
+    # ── Antigravity support (.agent/ convention) ──
+    New-Item -ItemType Directory -Path "$projectDir\.agent\skills" -Force | Out-Null
+    New-Item -ItemType Directory -Path "$projectDir\.agent\rules" -Force | Out-Null
+    New-Item -ItemType Directory -Path "$projectDir\.agent\workflows" -Force | Out-Null
+
+    # Agents -> .agent/skills/
+    Copy-Item -Recurse "$projectDir\.claude\agents\*" "$projectDir\.agent\skills\" -Force
+
+    # Skills -> .agent/workflows/
+    Get-ChildItem "$projectDir\.claude\skills" -Directory | ForEach-Object {
+        $skillFile = Join-Path $_.FullName "SKILL.md"
+        if (Test-Path $skillFile) {
+            Copy-Item $skillFile "$projectDir\.agent\workflows\$($_.Name).md" -Force
+        }
+    }
+
+    # CLAUDE.md -> .agent/rules/
+    Copy-Item "$projectDir\CLAUDE.md" "$projectDir\.agent\rules\main.md" -Force
+
+    Write-Ok "Antigravity (.agent/) configurado"
+
     # Cleanup
     Remove-Item -Recurse -Force "$env:TEMP\claudefree-dl" 2>$null
 
     Write-Ok "Projeto criado na Area de Trabalho: $projectDir"
     Write-Ok "14 agentes + 14 skills + 50 prompts + 3 nichos"
+    Write-Ok "Compativel com: VSCode, Cursor, Antigravity"
 }
 
 # ── Step 7: Configurar provider ──

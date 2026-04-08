@@ -159,9 +159,31 @@ else
 }
 EOF
 
+    # ── Antigravity support (.agent/ convention) ──
+    mkdir -p "$PROJECT_DIR/.agent/skills"
+    mkdir -p "$PROJECT_DIR/.agent/rules"
+    mkdir -p "$PROJECT_DIR/.agent/workflows"
+
+    # Agents -> .agent/skills/
+    cp "$PROJECT_DIR/.claude/agents/"*.md "$PROJECT_DIR/.agent/skills/" 2>/dev/null || true
+
+    # Skills -> .agent/workflows/
+    for skill_dir in "$PROJECT_DIR/.claude/skills/"*/; do
+        skill_name=$(basename "$skill_dir")
+        if [ -f "$skill_dir/SKILL.md" ]; then
+            cp "$skill_dir/SKILL.md" "$PROJECT_DIR/.agent/workflows/$skill_name.md"
+        fi
+    done
+
+    # CLAUDE.md -> .agent/rules/
+    cp "$PROJECT_DIR/CLAUDE.md" "$PROJECT_DIR/.agent/rules/main.md"
+
+    ok "Antigravity (.agent/) configurado"
+
     rm -rf /tmp/claudefree-dl
     ok "Projeto criado na Area de Trabalho: $PROJECT_DIR"
     ok "14 agentes + 14 skills + 50 prompts + 3 nichos"
+    ok "Compativel com: VSCode, Cursor, Antigravity"
 fi
 
 # ── Step 7: Provider ──
