@@ -779,9 +779,39 @@ footer a:hover { color: var(--text); }
 <section id="install">
   <div class="container">
     <div class="section-label">04 — Install</div>
-    <h2 class="section-title gradient-text">Instalar OpenClaude + ripgrep</h2>
+    <h2 class="section-title gradient-text">Setup em 1 linha</h2>
+    <p class="section-subtitle" style="margin-bottom:2.5rem">Uma linha no terminal. Instala tudo: OpenClaude, Ollama, modelo, ripgrep, Kit PA com 14 agentes. Cria o projeto na Area de Trabalho.</p>
 
-    <h3 style="font-size:1rem;color:var(--accent);margin-bottom:1rem">4.1 — OpenClaude CLI</h3>
+    <div class="os-switcher" data-group="oneshot">
+      <button class="os-btn active" onclick="switchOS(this,'oneshot-win')">Windows</button>
+      <button class="os-btn" onclick="switchOS(this,'oneshot-mac')">macOS / Linux</button>
+    </div>
+    <div id="oneshot-win" class="os-panel active">
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">powershell</span><span class="code-os">one-liner</span></div>
+        <div class="code-body"><pre>irm https://raw.githubusercontent.com/aifunnels/claudefree/master/scripts/setup-windows.ps1 | iex</pre></div>
+      </div>
+      <div class="alert alert-info">
+        <div class="alert-icon">Note</div>
+        <div class="alert-body">Abra o <strong>PowerShell</strong> (nao Git Bash), cole a linha acima e pressione Enter. O script detecta o que ja esta instalado e instala o que falta.</div>
+      </div>
+    </div>
+    <div id="oneshot-mac" class="os-panel">
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">bash</span><span class="code-os">one-liner</span></div>
+        <div class="code-body"><pre>curl -fsSL https://raw.githubusercontent.com/aifunnels/claudefree/master/scripts/setup-mac.sh | bash</pre></div>
+      </div>
+      <div class="alert alert-info">
+        <div class="alert-icon">Note</div>
+        <div class="alert-body">Abra o <strong>Terminal</strong>, cole a linha acima e pressione Enter.</div>
+      </div>
+    </div>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin:3rem 0">
+
+    <h3 style="font-size:1rem;color:var(--accent);margin-bottom:1rem">Instalacao manual (se preferir)</h3>
+
+    <h3 style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem">4.1 — OpenClaude CLI</h3>
 
     <div class="os-switcher" data-group="install">
       <button class="os-btn active" onclick="switchOS(this,'install-win')">Windows</button>
