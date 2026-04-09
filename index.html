@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OpenClaude — Setup Guide</title>
+<title>ClaudeFree — 14 Agentes IA. Uma linha de codigo.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -12,7 +12,6 @@
   --bg: #0a0a0a;
   --surface: #111111;
   --surface-2: #1a1a1a;
-  --surface-3: #222222;
   --border: #2a2a2a;
   --border-light: #333333;
   --text: #e8e8e8;
@@ -21,1363 +20,371 @@
   --accent: #ffffff;
   --glow: rgba(255,255,255,0.03);
   --glow-strong: rgba(255,255,255,0.06);
-  --danger: #ff4444;
   --success: #44ff88;
-  --warn: #ffaa33;
 }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.mono{font-family:'JetBrains Mono',monospace}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.animate-in{animation:fadeInUp .6s ease-out both}
 
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; font-size: 16px; }
+/* Nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,10,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem}
+nav .nav-inner{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:52px}
+nav .nav-brand{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:.8rem;letter-spacing:.05em}
+nav .nav-links{display:flex;gap:1.5rem;list-style:none}
+nav .nav-links a{font-family:'JetBrains Mono',monospace;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);text-decoration:none;transition:color .2s}
+nav .nav-links a:hover{color:var(--text)}
+@media(max-width:768px){nav .nav-links{display:none}}
 
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
-}
+/* Layout */
+.container{max-width:1120px;margin:0 auto;padding:0 2rem}
+section{padding:6rem 0;position:relative}
+section+section{border-top:1px solid var(--border)}
+.section-label{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:500;text-transform:uppercase;letter-spacing:.2em;color:var(--text-dim);margin-bottom:1rem}
+.section-title{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;letter-spacing:-.02em;line-height:1.15;color:var(--accent);margin-bottom:1.5rem}
+.section-subtitle{font-size:1rem;color:var(--text-muted);line-height:1.7;max-width:640px}
+.gradient-text{background:linear-gradient(135deg,#fff 0%,#666 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 
-.mono { font-family: 'JetBrains Mono', monospace; }
+/* Hero */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding-top:52px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(255,255,255,.015) 0%,transparent 70%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.4rem 1rem;border:1px solid var(--border);border-radius:100px;margin-bottom:2.5rem;animation:fadeIn .8s ease-out both}
+.hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--success);animation:pulse 2s ease-in-out infinite}
+.hero-badge span{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)}
+.hero h1{font-size:clamp(3rem,9vw,6.5rem);font-weight:900;letter-spacing:-.04em;line-height:.9;margin-bottom:.3em;animation:fadeInUp .8s ease-out .15s both}
+.hero h1 .line-2{display:block;font-size:.35em;font-weight:700;letter-spacing:-.01em;margin-top:.5em;background:linear-gradient(135deg,#fff 0%,#555 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-subtitle{font-size:1.05rem;color:var(--text-muted);max-width:560px;margin:0 auto 3rem;line-height:1.7;animation:fadeInUp .8s ease-out .3s both}
+.hero-stats{display:flex;justify-content:center;gap:2.5rem;flex-wrap:wrap;animation:fadeInUp .8s ease-out .45s both}
+.hero-stat{text-align:center}
+.hero-stat .num{font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:600;background:linear-gradient(135deg,#fff 0%,#888 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;line-height:1.2}
+.hero-stat .label{font-family:'JetBrains Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.15em;color:var(--text-dim)}
+.hero-divider{width:1px;height:24px;background:var(--border);align-self:center}
+@media(max-width:600px){.hero-stats{gap:1.5rem}.hero-divider{display:none}section{padding:4rem 0}}
 
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+/* Code */
+.code-block{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:1rem 0}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1rem;border-bottom:1px solid var(--border);background:var(--glow)}
+.code-header span{font-family:'JetBrains Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.15em;color:var(--text-dim)}
+.code-header .os-tag{padding:.15rem .5rem;border:1px solid var(--border);border-radius:4px}
+.code-body{padding:1.25rem 1.5rem;overflow-x:auto}
+.code-body pre{font-family:'JetBrains Mono',monospace;font-size:.85rem;line-height:1.8;color:var(--text);margin:0;white-space:pre-wrap;word-break:break-all}
+.code-body .c{color:var(--text-dim)}
 
-.animate-in { animation: fadeInUp 0.6s ease-out both; }
-.delay-1 { animation-delay: 0.1s; }
-.delay-2 { animation-delay: 0.2s; }
-.delay-3 { animation-delay: 0.3s; }
-.delay-4 { animation-delay: 0.4s; }
+/* Grids */
+.grid-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:var(--border);border-radius:10px;overflow:hidden}
+.grid-card{background:var(--surface);padding:2rem;transition:background .2s}
+.grid-card:hover{background:var(--surface-2)}
+.grid-card .card-num{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text-dim);margin-bottom:.75rem}
+.grid-card h3{font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:.5rem;letter-spacing:-.01em}
+.grid-card p{font-size:.85rem;color:var(--text-muted);line-height:1.6}
 
-/* ── Nav ── */
-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  background: rgba(10, 10, 10, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  padding: 0 2rem;
-}
-nav .nav-inner {
-  max-width: 1120px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 52px;
-}
-nav .nav-brand {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 600;
-  font-size: 0.8rem;
-  letter-spacing: 0.05em;
-  color: var(--text);
-}
-nav .nav-links {
-  display: flex;
-  gap: 1.5rem;
-  list-style: none;
-}
-nav .nav-links a {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-dim);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-nav .nav-links a:hover { color: var(--text); }
-@media (max-width: 768px) { nav .nav-links { display: none; } }
+/* Table */
+.data-table{width:100%;border-collapse:collapse;margin:1.5rem 0}
+.data-table th,.data-table td{padding:.9rem 1rem;text-align:left;border-bottom:1px solid var(--border)}
+.data-table th{font-family:'JetBrains Mono',monospace;font-size:.65rem;text-transform:uppercase;letter-spacing:.15em;color:var(--text-dim);font-weight:500}
+.data-table td{font-size:.85rem;color:var(--text-muted)}
+.data-table td:first-child{color:var(--accent);font-weight:600;font-size:.9rem}
+.data-table tr:hover td{background:var(--glow)}
 
-/* ── Layout ── */
-.container { max-width: 1120px; margin: 0 auto; padding: 0 2rem; }
-section { padding: 6rem 0; position: relative; }
-section + section { border-top: 1px solid var(--border); }
+/* Alert */
+.alert{border:1px solid var(--border);border-radius:8px;padding:1.25rem 1.5rem;margin:1.5rem 0;background:var(--surface)}
+.alert-body{font-size:.88rem;color:var(--text-muted);line-height:1.6}
+.alert-body strong{color:var(--text)}
+.alert-body code{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent);background:var(--surface-2);padding:.1rem .4rem;border-radius:3px;border:1px solid var(--border)}
 
-/* ── Typography ── */
-.section-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.65rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: var(--text-dim);
-  margin-bottom: 1rem;
-}
-.section-title {
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-  color: var(--accent);
-  margin-bottom: 1.5rem;
-}
-.section-subtitle {
-  font-size: 1rem;
-  color: var(--text-muted);
-  line-height: 1.7;
-  max-width: 640px;
-}
-.gradient-text {
-  background: linear-gradient(135deg, #fff 0%, #666 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+/* Tabs */
+.os-switcher{display:flex;gap:0}
+.os-btn{font-family:'JetBrains Mono',monospace;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;padding:.6rem 1.2rem;background:var(--surface);border:1px solid var(--border);color:var(--text-dim);cursor:pointer;transition:all .2s}
+.os-btn:first-child{border-radius:6px 0 0 0}
+.os-btn:last-child{border-radius:0 6px 0 0;border-left:none}
+.os-btn.active{background:var(--surface-2);color:var(--accent);border-bottom-color:var(--surface-2)}
+.os-panel{display:none;background:var(--surface-2);border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;padding:1.5rem;margin-bottom:1.5rem}
+.os-panel.active{display:block}
 
-/* ── Hero ── */
-.hero {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding-top: 52px;
-  position: relative;
-  overflow: hidden;
-}
-.hero::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(255,255,255,0.015) 0%, transparent 70%);
-  pointer-events: none;
-}
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 1rem;
-  border: 1px solid var(--border);
-  border-radius: 100px;
-  margin-bottom: 2.5rem;
-  animation: fadeIn 0.8s ease-out both;
-}
-.hero-badge .dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
-  animation: pulse 2s ease-in-out infinite;
-}
-.hero-badge span {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-.hero h1 {
-  font-size: clamp(3.5rem, 10vw, 7rem);
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  line-height: 0.9;
-  margin-bottom: 0.3em;
-  animation: fadeInUp 0.8s ease-out 0.15s both;
-}
-.hero h1 .line-2 {
-  display: block;
-  font-size: 0.4em;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  background: linear-gradient(135deg, #fff 0%, #555 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.hero-subtitle {
-  font-size: 1.05rem;
-  color: var(--text-muted);
-  max-width: 580px;
-  margin: 0 auto 3.5rem;
-  line-height: 1.7;
-  animation: fadeInUp 0.8s ease-out 0.3s both;
-}
-.hero-stats {
-  display: flex;
-  justify-content: center;
-  gap: 2.5rem;
-  flex-wrap: wrap;
-  animation: fadeInUp 0.8s ease-out 0.45s both;
-}
-.hero-stat { text-align: center; }
-.hero-stat .num {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 1.6rem;
-  font-weight: 600;
-  background: linear-gradient(135deg, #fff 0%, #888 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  display: block;
-  line-height: 1.2;
-}
-.hero-stat .label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.6rem;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--text-dim);
-}
-.hero-divider {
-  width: 1px;
-  height: 24px;
-  background: var(--border);
-  align-self: center;
-}
+/* Checklist */
+.checklist{list-style:none;padding:0;margin:1rem 0}
+.checklist li{font-size:.88rem;color:var(--text-muted);padding:.6rem 0 .6rem 2rem;position:relative;border-bottom:1px solid var(--border)}
+.checklist li::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:14px;height:14px;border:1px solid var(--border-light);border-radius:3px}
+.checklist li code{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--text);background:var(--surface);padding:.1rem .4rem;border-radius:3px}
 
-/* ── Pipeline Steps ── */
-.pipeline-flow {
-  display: flex;
-  align-items: stretch;
-  gap: 0;
-  overflow-x: auto;
-  padding-bottom: 1rem;
-}
-.pipeline-step {
-  flex: 1;
-  min-width: 120px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  position: relative;
-  padding: 1.5rem 1rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  transition: background 0.2s, border-color 0.2s;
-}
-.pipeline-step:hover { background: var(--surface-2); border-color: var(--border-light); }
-.pipeline-step .step-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--accent);
-  margin-bottom: 0.5rem;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--border-light);
-  border-radius: 50%;
-}
-.pipeline-step .step-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--accent);
-  margin-bottom: 0.5rem;
-}
-.pipeline-step .step-desc {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  line-height: 1.5;
-}
-.pipeline-arrow {
-  display: flex;
-  align-items: center;
-  padding: 0 0.25rem;
-  color: var(--text-dim);
-  font-size: 1.2rem;
-  flex-shrink: 0;
-}
-@media (max-width: 900px) {
-  .pipeline-flow { flex-direction: column; gap: 2px; }
-  .pipeline-arrow { justify-content: center; transform: rotate(90deg); padding: 0.25rem 0; }
-}
+/* Arch */
+.arch-stack{display:flex;flex-direction:column;gap:2px}
+.arch-layer{display:grid;grid-template-columns:3px 1fr auto;gap:0 1.5rem;align-items:center;padding:1.25rem 1.5rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;transition:background .2s,border-color .2s}
+.arch-layer:hover{background:var(--surface-2);border-color:var(--border-light)}
+.arch-layer .bar{width:3px;height:100%;min-height:36px;border-radius:2px;background:linear-gradient(180deg,#fff 0%,#333 100%);grid-row:1/3}
+.arch-layer .layer-label{font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:600;letter-spacing:.05em;color:var(--accent)}
+.arch-layer .layer-desc{font-size:.85rem;color:var(--text-muted);grid-column:2;margin-top:.25rem}
+.arch-layer .layer-metric{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--text-dim);text-align:right;white-space:nowrap;grid-row:1/3}
 
-/* ── Grid Cards ── */
-.grid-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1px;
-  background: var(--border);
-  border-radius: 10px;
-  overflow: hidden;
-}
-.grid-card {
-  background: var(--surface);
-  padding: 2rem;
-  transition: background 0.2s;
-}
-.grid-card:hover { background: var(--surface-2); }
-.grid-card .card-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.65rem;
-  color: var(--text-dim);
-  margin-bottom: 0.75rem;
-}
-.grid-card h3 {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--accent);
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.01em;
-}
-.grid-card p {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  line-height: 1.6;
-}
-
-/* ── Code Blocks ── */
-.code-block {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-  margin: 1rem 0;
-}
-.code-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.6rem 1rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--glow);
-}
-.code-header .code-lang {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.6rem;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--text-dim);
-}
-.code-header .code-os {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.6rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-dim);
-  padding: 0.15rem 0.5rem;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-}
-.code-body {
-  padding: 1.25rem 1.5rem;
-  overflow-x: auto;
-}
-.code-body pre {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.82rem;
-  line-height: 1.7;
-  color: var(--text-muted);
-  margin: 0;
-}
-.code-body .c { color: var(--text-dim); }
-.code-body .p { color: var(--text-dim); }
-.code-body .v { color: var(--text); }
-.code-body .s { color: var(--text-muted); }
-
-/* ── Alert Blocks ── */
-.alert {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 1.25rem 1.5rem;
-  margin: 1.5rem 0;
-  background: var(--surface);
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0 1rem;
-  align-items: start;
-}
-.alert-icon {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.65rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
-  border: 1px solid;
-  white-space: nowrap;
-  margin-top: 2px;
-}
-.alert-danger .alert-icon { color: var(--danger); border-color: rgba(255,68,68,0.3); }
-.alert-warn .alert-icon { color: var(--warn); border-color: rgba(255,170,51,0.3); }
-.alert-info .alert-icon { color: #6688ff; border-color: rgba(102,136,255,0.3); }
-.alert-success .alert-icon { color: var(--success); border-color: rgba(68,255,136,0.3); }
-.alert-body {
-  font-size: 0.88rem;
-  color: var(--text-muted);
-  line-height: 1.6;
-}
-.alert-body strong { color: var(--text); font-weight: 600; }
-.alert-body code {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.82rem;
-  color: var(--text);
-  background: var(--surface-2);
-  padding: 0.1rem 0.4rem;
-  border-radius: 3px;
-  border: 1px solid var(--border);
-}
-
-/* ── Tables ── */
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1.5rem 0;
-}
-.data-table th, .data-table td {
-  padding: 0.9rem 1rem;
-  text-align: left;
-  border-bottom: 1px solid var(--border);
-}
-.data-table th {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--text-dim);
-  font-weight: 500;
-}
-.data-table td {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-}
-.data-table td:first-child {
-  color: var(--accent);
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-.data-table tr:hover td { background: var(--glow); }
-
-/* ── OS Tabs ── */
-.os-switcher {
-  display: flex;
-  gap: 0;
-  margin-bottom: 0;
-}
-.os-btn {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  padding: 0.6rem 1.2rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.os-btn:first-child { border-radius: 6px 0 0 0; }
-.os-btn:last-child { border-radius: 0 6px 0 0; border-left: none; }
-.os-btn.active {
-  background: var(--surface-2);
-  color: var(--accent);
-  border-bottom-color: var(--surface-2);
-}
-.os-panel {
-  display: none;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-top: none;
-  border-radius: 0 0 8px 8px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-.os-panel.active { display: block; }
-
-/* ── Arch Layers ── */
-.arch-stack { display: flex; flex-direction: column; gap: 2px; }
-.arch-layer {
-  display: grid;
-  grid-template-columns: 3px 1fr auto;
-  gap: 0 1.5rem;
-  align-items: center;
-  padding: 1.25rem 1.5rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  transition: background 0.2s, border-color 0.2s;
-}
-.arch-layer:hover { background: var(--surface-2); border-color: var(--border-light); }
-.arch-layer .bar {
-  width: 3px;
-  height: 100%;
-  min-height: 36px;
-  border-radius: 2px;
-  background: linear-gradient(180deg, #fff 0%, #333 100%);
-  grid-row: 1 / 3;
-}
-.arch-layer .layer-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  color: var(--accent);
-}
-.arch-layer .layer-desc {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  grid-column: 2;
-  margin-top: 0.25rem;
-}
-.arch-layer .layer-metric {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.7rem;
-  color: var(--text-dim);
-  text-align: right;
-  white-space: nowrap;
-  grid-row: 1 / 3;
-}
-
-/* ── Pills ── */
-.pill {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.6rem;
-  padding: 0.2rem 0.6rem;
-  border: 1px solid var(--border);
-  border-radius: 100px;
-  color: var(--text-muted);
-  letter-spacing: 0.02em;
-  display: inline-block;
-}
-
-/* ── Checklist ── */
-.checklist { list-style: none; padding: 0; margin: 1rem 0; }
-.checklist li {
-  font-size: 0.88rem;
-  color: var(--text-muted);
-  padding: 0.6rem 0 0.6rem 2rem;
-  position: relative;
-  border-bottom: 1px solid var(--border);
-}
-.checklist li::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 14px;
-  height: 14px;
-  border: 1px solid var(--border-light);
-  border-radius: 3px;
-}
-.checklist li code {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.8rem;
-  color: var(--text);
-  background: var(--surface);
-  padding: 0.1rem 0.4rem;
-  border-radius: 3px;
-}
-
-/* ── Footer ── */
-footer {
-  padding: 4rem 2rem;
-  text-align: center;
-  border-top: 1px solid var(--border);
-}
-footer .footer-brand {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  color: var(--text-dim);
-  margin-bottom: 0.5rem;
-}
-footer .footer-sub {
-  font-size: 0.75rem;
-  color: var(--text-dim);
-}
-footer a {
-  color: var(--text-muted);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-footer a:hover { color: var(--text); }
-
-@media (max-width: 600px) {
-  .hero-stats { gap: 1.5rem; }
-  .hero-divider { display: none; }
-  section { padding: 4rem 0; }
-}
+/* Footer */
+footer{padding:4rem 2rem;text-align:center;border-top:1px solid var(--border)}
+footer .footer-brand{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.1em;color:var(--text-dim);margin-bottom:.5rem}
+footer a{color:var(--text-muted);text-decoration:none;transition:color .2s}
+footer a:hover{color:var(--text)}
 </style>
 </head>
 <body>
 
-<!-- ═══ NAV ═══ -->
 <nav>
   <div class="nav-inner">
-    <div class="nav-brand">OPENCLAUDE</div>
+    <div class="nav-brand">CLAUDEFREE</div>
     <ul class="nav-links">
-      <li><a href="#install">Install</a></li>
-      <li><a href="#ollama">Ollama</a></li>
-      <li><a href="#run">Launch</a></li>
-      <li><a href="#vscode">VSCode</a></li>
-      <li><a href="#fix">Fixes</a></li>
+      <li><a href="#setup">Setup</a></li>
+      <li><a href="#agents">Agentes</a></li>
+      <li><a href="#providers">Providers</a></li>
+      <li><a href="#troubleshoot">Fixes</a></li>
     </ul>
   </div>
 </nav>
 
-<!-- ═══ HERO ═══ -->
+<!-- HERO -->
 <section class="hero">
   <div>
     <div class="hero-badge">
       <div class="dot"></div>
-      <span>Setup Guide v1.0</span>
+      <span>Kit Piloto Automatico v29.9</span>
     </div>
     <h1 class="animate-in">
-      Open<br>Claude
-      <span class="line-2">Any LLM. One Terminal.</span>
+      Claude<br>Free
+      <span class="line-2">14 agentes IA. Uma linha de codigo.</span>
     </h1>
     <p class="hero-subtitle">
-      Guia completo de instalacao — do zero ao funcionando.<br>
-      Windows, macOS, Ollama local, extensao VSCode.
+      Instala tudo automaticamente. Pede sua key. Testa. Abre.<br>
+      Sua empresa com IA rodando em menos de 5 minutos.
     </p>
     <div class="hero-stats">
-      <div class="hero-stat">
-        <span class="num">200+</span>
-        <span class="label">Modelos</span>
-      </div>
+      <div class="hero-stat"><span class="num">14</span><span class="label">Agentes</span></div>
       <div class="hero-divider"></div>
-      <div class="hero-stat">
-        <span class="num">0</span>
-        <span class="label">Custo com Ollama</span>
-      </div>
+      <div class="hero-stat"><span class="num">14</span><span class="label">Skills</span></div>
       <div class="hero-divider"></div>
-      <div class="hero-stat">
-        <span class="num">~5min</span>
-        <span class="label">Setup</span>
-      </div>
+      <div class="hero-stat"><span class="num">50</span><span class="label">Prompts</span></div>
       <div class="hero-divider"></div>
-      <div class="hero-stat">
-        <span class="num">100%</span>
-        <span class="label">Local</span>
-      </div>
+      <div class="hero-stat"><span class="num">R$0</span><span class="label">Custo</span></div>
     </div>
   </div>
 </section>
 
-<!-- ═══ OVERVIEW ═══ -->
-<section>
+<!-- SETUP -->
+<section id="setup">
   <div class="container">
-    <div class="section-label">01 — Overview</div>
-    <h2 class="section-title gradient-text">O que e o OpenClaude</h2>
-    <p class="section-subtitle" style="margin-bottom:2.5rem">CLI de coding-agent open-source. Clone do Claude Code que funciona com qualquer LLM.</p>
+    <div class="section-label">01 — Setup</div>
+    <h2 class="section-title gradient-text">Uma linha. Tudo automatico.</h2>
+    <p class="section-subtitle" style="margin-bottom:.5rem">Antes de rodar: crie sua API key gratis em <strong>openrouter.ai/keys</strong></p>
+    <p class="section-subtitle" style="margin-bottom:2.5rem;color:var(--text-dim)">O script vai pedir a key no meio do processo, testar, e abrir o OpenClaude automaticamente.</p>
 
-    <div class="grid-cards">
-      <div class="grid-card">
-        <div class="card-num mono">01</div>
-        <h3>Multi-Provider</h3>
-        <p>OpenAI, Gemini, Ollama, DeepSeek, GitHub Models, LM Studio, e qualquer API compativel com OpenAI /v1.</p>
-      </div>
-      <div class="grid-card">
-        <div class="card-num mono">02</div>
-        <h3>Ferramentas Completas</h3>
-        <p>Bash, Read/Write/Edit, Grep, Glob, Agents, Tasks, MCP servers, slash commands, streaming.</p>
-      </div>
-      <div class="grid-card">
-        <div class="card-num mono">03</div>
-        <h3>100% Local</h3>
-        <p>Com Ollama, tudo roda na sua maquina. Sem API key, sem custo, sem enviar dados pra nuvem.</p>
-      </div>
-      <div class="grid-card">
-        <div class="card-num mono">04</div>
-        <h3>Extensao VSCode</h3>
-        <p>Control Center na sidebar, launch com um clique, deteccao de provider, tema dark integrado.</p>
-      </div>
+    <div class="os-switcher">
+      <button class="os-btn active" onclick="switchOS(this,'s-win')">Windows</button>
+      <button class="os-btn" onclick="switchOS(this,'s-mac')">macOS / Linux</button>
     </div>
-  </div>
-</section>
-
-<!-- ═══ PIPELINE ═══ -->
-<section>
-  <div class="container">
-    <div class="section-label">02 — Installation Pipeline</div>
-    <h2 class="section-title gradient-text">Sequencia de Setup</h2>
-    <p class="section-subtitle" style="margin-bottom:2.5rem">Siga na ordem. Cada passo depende do anterior.</p>
-
-    <div class="pipeline-flow">
-      <div class="pipeline-step animate-in delay-1">
-        <div class="step-num">1</div>
-        <div class="step-label">Node.js</div>
-        <div class="step-desc">Runtime v20+</div>
-      </div>
-      <div class="pipeline-arrow">&#8594;</div>
-      <div class="pipeline-step animate-in delay-2">
-        <div class="step-num">2</div>
-        <div class="step-label">OpenClaude</div>
-        <div class="step-desc">npm global</div>
-      </div>
-      <div class="pipeline-arrow">&#8594;</div>
-      <div class="pipeline-step animate-in delay-3">
-        <div class="step-num">3</div>
-        <div class="step-label">ripgrep</div>
-        <div class="step-desc">Busca de arquivos</div>
-      </div>
-      <div class="pipeline-arrow">&#8594;</div>
-      <div class="pipeline-step animate-in delay-4">
-        <div class="step-num">4</div>
-        <div class="step-label">Ollama</div>
-        <div class="step-desc">LLM local</div>
-      </div>
-      <div class="pipeline-arrow">&#8594;</div>
-      <div class="pipeline-step animate-in">
-        <div class="step-num">5</div>
-        <div class="step-label">Launch</div>
-        <div class="step-desc">openclaude --bare</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ PRE-REQS ═══ -->
-<section>
-  <div class="container">
-    <div class="section-label">03 — Pre-Requisitos</div>
-    <h2 class="section-title gradient-text">Antes de comecar</h2>
-
-    <table class="data-table">
-      <thead>
-        <tr><th>Requisito</th><th>Minimo</th><th>Recomendado</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Node.js</td><td>v20+</td><td>v22+ LTS</td></tr>
-        <tr><td>RAM</td><td>8 GB</td><td>16 GB (modelo 7B)</td></tr>
-        <tr><td>Disco Livre</td><td>~7 GB</td><td>10 GB+</td></tr>
-        <tr><td>Git</td><td>Qualquer</td><td>Git 2.40+ (Windows: inclui Git Bash)</td></tr>
-        <tr><td>Terminal</td><td>PowerShell / Terminal.app</td><td>Windows Terminal + PowerShell</td></tr>
-      </tbody>
-    </table>
-
-    <div class="alert alert-danger">
-      <div class="alert-icon">BLOCKER</div>
-      <div class="alert-body">
-        <strong>Windows: NAO use Git Bash.</strong> O OpenClaude usa <code>setRawMode</code> no stdin. O mintty (Git Bash) nao suporta — o terminal congela na inicializacao. Use <strong>PowerShell</strong> ou <strong>CMD</strong>.
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ INSTALL ═══ -->
-<section id="install">
-  <div class="container">
-    <div class="section-label">04 — Install</div>
-    <h2 class="section-title gradient-text">Setup em 1 linha</h2>
-    <p class="section-subtitle" style="margin-bottom:2.5rem">Uma linha no terminal. Instala tudo: OpenClaude, Ollama, modelo, ripgrep, Kit PA com 14 agentes. Cria o projeto na Area de Trabalho.</p>
-
-    <div class="os-switcher" data-group="oneshot">
-      <button class="os-btn active" onclick="switchOS(this,'oneshot-win')">Windows</button>
-      <button class="os-btn" onclick="switchOS(this,'oneshot-mac')">macOS / Linux</button>
-    </div>
-    <div id="oneshot-win" class="os-panel active">
+    <div id="s-win" class="os-panel active">
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1rem">Abra o <strong style="color:var(--accent)">PowerShell</strong> (ou o terminal do VSCode/Cursor) e cole:</p>
       <div class="code-block">
-        <div class="code-header"><span class="code-lang">powershell</span><span class="code-os">one-liner</span></div>
+        <div class="code-header"><span>powershell</span><span class="os-tag">windows</span></div>
         <div class="code-body"><pre>irm https://raw.githubusercontent.com/aifunnels/claudefree/master/scripts/setup-windows.ps1 | iex</pre></div>
       </div>
-      <div class="alert alert-info">
-        <div class="alert-icon">Note</div>
-        <div class="alert-body">Abra o <strong>PowerShell</strong> (nao Git Bash), cole a linha acima e pressione Enter. O script detecta o que ja esta instalado e instala o que falta.</div>
+      <div class="alert">
+        <div class="alert-body">
+          <strong>NAO use Git Bash.</strong> Abre PowerShell ou o terminal do VSCode (<code>Ctrl+`</code>).
+        </div>
       </div>
     </div>
-    <div id="oneshot-mac" class="os-panel">
+    <div id="s-mac" class="os-panel">
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1rem">Abra o <strong style="color:var(--accent)">Terminal</strong> (ou o terminal do VSCode/Cursor) e cole:</p>
       <div class="code-block">
-        <div class="code-header"><span class="code-lang">bash</span><span class="code-os">one-liner</span></div>
+        <div class="code-header"><span>bash</span><span class="os-tag">macos / linux</span></div>
         <div class="code-body"><pre>curl -fsSL https://raw.githubusercontent.com/aifunnels/claudefree/master/scripts/setup-mac.sh | bash</pre></div>
       </div>
-      <div class="alert alert-info">
-        <div class="alert-icon">Note</div>
-        <div class="alert-body">Abra o <strong>Terminal</strong>, cole a linha acima e pressione Enter.</div>
-      </div>
     </div>
 
-    <hr style="border:none;border-top:1px solid var(--border);margin:3rem 0">
-
-    <h3 style="font-size:1rem;color:var(--accent);margin:2rem 0 1rem">Funciona em qualquer IDE</h3>
-    <div class="grid-cards" style="margin-bottom:2.5rem">
-      <div class="grid-card">
-        <div class="card-num mono">IDE</div>
-        <h3>VSCode / Cursor</h3>
-        <p>Abre o terminal integrado (<code style="font-family:'JetBrains Mono';font-size:0.82rem;color:var(--accent)">Ctrl+`</code>), cola o one-liner acima. O projeto aparece no Explorer. Agentes ficam em <code style="font-family:'JetBrains Mono';font-size:0.82rem">.claude/agents/</code></p>
-      </div>
-      <div class="grid-card">
-        <div class="card-num mono">IDE</div>
-        <h3>Antigravity</h3>
-        <p>O script ja cria a estrutura <code style="font-family:'JetBrains Mono';font-size:0.82rem">.agent/</code> automaticamente: agents em <code style="font-family:'JetBrains Mono';font-size:0.82rem">.agent/skills/</code>, skills em <code style="font-family:'JetBrains Mono';font-size:0.82rem">.agent/workflows/</code>, regras em <code style="font-family:'JetBrains Mono';font-size:0.82rem">.agent/rules/</code></p>
-      </div>
-      <div class="grid-card">
-        <div class="card-num mono">CLI</div>
-        <h3>Terminal Puro</h3>
-        <p>PowerShell (Windows) ou Terminal (macOS). Funciona sem IDE — o OpenClaude e um CLI independente.</p>
-      </div>
+    <h3 style="font-size:1rem;color:var(--accent);margin:2.5rem 0 1rem">O que o script faz</h3>
+    <div class="arch-stack">
+      <div class="arch-layer"><div class="bar"></div><div><div class="layer-label">1. Dependencias</div><div class="layer-desc">Instala Node.js, Git, OpenClaude e ripgrep (pula o que ja tem)</div></div><div class="layer-metric">auto</div></div>
+      <div class="arch-layer"><div class="bar"></div><div><div class="layer-label">2. API Key</div><div class="layer-desc">Pede sua key do OpenRouter e testa na hora</div></div><div class="layer-metric">1 input</div></div>
+      <div class="arch-layer"><div class="bar"></div><div><div class="layer-label">3. Kit PA</div><div class="layer-desc">Cria pasta minha-empresa na Area de Trabalho com 14 agentes, 14 skills, 50 prompts</div></div><div class="layer-metric">auto</div></div>
+      <div class="arch-layer"><div class="bar"></div><div><div class="layer-label">4. Abre</div><div class="layer-desc">Salva a key e abre o OpenClaude automaticamente</div></div><div class="layer-metric">auto</div></div>
     </div>
 
-    <h3 style="font-size:1rem;color:var(--accent);margin-bottom:1rem">Instalacao manual (se preferir)</h3>
-
-    <h3 style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem">4.1 — OpenClaude CLI</h3>
-
-    <div class="os-switcher" data-group="install">
-      <button class="os-btn active" onclick="switchOS(this,'install-win')">Windows</button>
-      <button class="os-btn" onclick="switchOS(this,'install-mac')">macOS / Linux</button>
-    </div>
-    <div id="install-win" class="os-panel active">
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-lang">powershell</span>
-          <span class="code-os">windows</span>
-        </div>
-        <div class="code-body"><pre><span class="c"># Verificar Node.js</span>
-node --version
-npm --version
-
-<span class="c"># Instalar globalmente</span>
-npm install -g @gitlawb/openclaude
-
-<span class="c"># Verificar</span>
-openclaude --version</pre></div>
-      </div>
-    </div>
-    <div id="install-mac" class="os-panel">
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-lang">bash</span>
-          <span class="code-os">macos / linux</span>
-        </div>
-        <div class="code-body"><pre><span class="c"># Verificar Node.js</span>
-node --version
-npm --version
-
-<span class="c"># Instalar globalmente</span>
-npm install -g @gitlawb/openclaude
-
-<span class="c"># Verificar</span>
-openclaude --version</pre></div>
-      </div>
-    </div>
-
-    <h3 style="font-size:1rem;color:var(--accent);margin:2rem 0 1rem">4.2 — ripgrep (obrigatorio)</h3>
-
-    <div class="alert alert-danger">
-      <div class="alert-icon">Bug</div>
-      <div class="alert-body">
-        O pacote npm <strong>nao inclui o binario do ripgrep</strong> para Windows. O erro no debug log:<br>
-        <code>spawn ...vendor\ripgrep\x64-win32\rg.exe ENOENT</code><br>
-        <code>Ripgrep first use test: FAILED</code>
-      </div>
-    </div>
-
-    <div class="os-switcher" data-group="rg">
-      <button class="os-btn active" onclick="switchOS(this,'rg-win')">Windows</button>
-      <button class="os-btn" onclick="switchOS(this,'rg-mac')">macOS / Linux</button>
-    </div>
-    <div id="rg-win" class="os-panel active">
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-lang">powershell</span>
-          <span class="code-os">windows</span>
-        </div>
-        <div class="code-body"><pre><span class="c"># Via winget (recomendado)</span>
-winget install BurntSushi.ripgrep.MSVC
-
-<span class="c"># OU via Chocolatey</span>
-choco install ripgrep
-
-<span class="c"># Fechar e reabrir o terminal, depois:</span>
-rg --version</pre></div>
-      </div>
-    </div>
-    <div id="rg-mac" class="os-panel">
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-lang">bash</span>
-          <span class="code-os">macos / linux</span>
-        </div>
-        <div class="code-body"><pre><span class="c"># macOS</span>
-brew install ripgrep
-
-<span class="c"># Ubuntu/Debian</span>
-sudo apt install ripgrep
-
-<span class="c"># Fedora</span>
-sudo dnf install ripgrep
-
-<span class="c"># Verificar</span>
-rg --version</pre></div>
-      </div>
+    <h3 style="font-size:1rem;color:var(--accent);margin:2.5rem 0 1rem">Funciona em qualquer IDE</h3>
+    <div class="grid-cards">
+      <div class="grid-card"><div class="card-num mono">IDE</div><h3>VSCode / Cursor</h3><p>Abre o terminal integrado (<code style="font-family:'JetBrains Mono';font-size:.82rem;color:var(--accent)">Ctrl+`</code>) e cola o one-liner.</p></div>
+      <div class="grid-card"><div class="card-num mono">IDE</div><h3>Antigravity</h3><p>O script cria <code style="font-family:'JetBrains Mono';font-size:.82rem">.agent/</code> automaticamente com skills, workflows e rules.</p></div>
+      <div class="grid-card"><div class="card-num mono">CLI</div><h3>Terminal</h3><p>PowerShell (Windows) ou Terminal (macOS). Funciona sem IDE.</p></div>
     </div>
   </div>
 </section>
 
-<!-- ═══ OLLAMA ═══ -->
-<section id="ollama">
+<!-- AGENTS -->
+<section id="agents">
   <div class="container">
-    <div class="section-label">05 — Local LLM</div>
-    <h2 class="section-title gradient-text">Ollama + qwen2.5-coder:7b</h2>
-    <p class="section-subtitle" style="margin-bottom:2.5rem">Modelo local, gratuito, sem API key. Roda 100% na sua maquina.</p>
-
-    <h3 style="font-size:1rem;color:var(--accent);margin-bottom:1rem">5.1 — Instalar Ollama</h3>
-
-    <div class="os-switcher" data-group="ollama">
-      <button class="os-btn active" onclick="switchOS(this,'ollama-win')">Windows</button>
-      <button class="os-btn" onclick="switchOS(this,'ollama-mac')">macOS</button>
-    </div>
-    <div id="ollama-win" class="os-panel active">
-      <div class="code-block">
-        <div class="code-header"><span class="code-lang">powershell</span><span class="code-os">windows</span></div>
-        <div class="code-body"><pre><span class="c"># Instalar (~1.8 GB download)</span>
-winget install Ollama.Ollama
-
-<span class="c"># Fechar e reabrir terminal</span>
-ollama --version</pre></div>
-      </div>
-      <div class="alert alert-info">
-        <div class="alert-icon">Note</div>
-        <div class="alert-body">O Ollama server inicia automaticamente no Windows. Verifique o icone no system tray (perto do relogio).</div>
-      </div>
-    </div>
-    <div id="ollama-mac" class="os-panel">
-      <div class="code-block">
-        <div class="code-header"><span class="code-lang">bash</span><span class="code-os">macos</span></div>
-        <div class="code-body"><pre><span class="c"># Via Homebrew</span>
-brew install ollama
-
-<span class="c"># Iniciar o server</span>
-ollama serve &amp;
-
-<span class="c"># Verificar</span>
-ollama --version</pre></div>
-      </div>
-    </div>
-
-    <h3 style="font-size:1rem;color:var(--accent);margin:2.5rem 0 1rem">5.2 — Baixar modelo</h3>
+    <div class="section-label">02 — Agentes</div>
+    <h2 class="section-title gradient-text">Seu time de 14 agentes IA</h2>
+    <p class="section-subtitle" style="margin-bottom:2.5rem">Cada agente tem papel definido, conhecimento sob demanda e anti-patterns. O @cos roteia automaticamente.</p>
 
     <table class="data-table">
-      <thead>
-        <tr><th>Modelo</th><th>Tamanho</th><th>RAM</th><th>Qualidade</th></tr>
-      </thead>
+      <thead><tr><th>Agente</th><th>Papel</th><th>Quando usar</th></tr></thead>
       <tbody>
-        <tr><td>qwen2.5-coder:3b</td><td>~2 GB</td><td>6 GB</td><td>Basico — testes rapidos</td></tr>
-        <tr style="background:var(--glow-strong)"><td>qwen2.5-coder:7b</td><td>~4.7 GB</td><td>8 GB</td><td style="color:var(--accent)">Recomendado</td></tr>
-        <tr><td>llama3.1:8b</td><td>~4.7 GB</td><td>8 GB</td><td>Generalista</td></tr>
-        <tr><td>deepseek-coder-v2:16b</td><td>~9 GB</td><td>16 GB</td><td>Avancado — mais pesado</td></tr>
+        <tr><td>@cos</td><td>Router inteligente</td><td>Automatico — classifica e despacha</td></tr>
+        <tr><td>@ceo</td><td>Estrategia</td><td>OKRs, roadmap, SWOT, visao</td></tr>
+        <tr><td>@cfo</td><td>Financeiro</td><td>Fluxo de caixa, pricing, projecoes</td></tr>
+        <tr><td>@cmo</td><td>Marketing</td><td>Canais, calendario editorial, SEO</td></tr>
+        <tr><td>@cso</td><td>Vendas</td><td>Pipeline, prospeccao, scripts</td></tr>
+        <tr><td>@coo</td><td>Operacoes</td><td>SOPs, automacao, processos</td></tr>
+        <tr><td>@cpo</td><td>Produto</td><td>Discovery, RICE, roadmap de produto</td></tr>
+        <tr><td>@cto</td><td>Tecnologia</td><td>Arquitetura, seguranca, tech debt</td></tr>
+        <tr><td>@chro</td><td>Pessoas</td><td>Contratacao, cultura, PDI</td></tr>
+        <tr><td>@copy</td><td>Copywriting</td><td>Headlines, emails, ads, roteiros</td></tr>
+        <tr><td>@traffic</td><td>Trafego pago</td><td>Meta Ads, Google Ads, otimizacao</td></tr>
+        <tr><td>@carrossel</td><td>Carrosseis</td><td>Instagram, LinkedIn — copy + design</td></tr>
+        <tr><td>@revisor</td><td>Qualidade</td><td>Review com score 0-100</td></tr>
+        <tr><td>@onboarding</td><td>Integracao</td><td>Onboarding de novos clientes</td></tr>
       </tbody>
     </table>
 
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">terminal</span><span class="code-os">ambos</span></div>
-      <div class="code-body"><pre><span class="c"># Baixar o modelo recomendado (~4.7 GB)</span>
-ollama pull qwen2.5-coder:7b
-
-<span class="c"># Verificar</span>
-ollama list
-
-<span class="c"># Teste rapido</span>
-ollama run qwen2.5-coder:7b "Write a hello world in Python"
-<span class="c"># Ctrl+D para sair</span></pre></div>
-    </div>
+    <h3 style="font-size:1rem;color:var(--accent);margin:2.5rem 0 1rem">14 Skills (comandos /)</h3>
+    <table class="data-table">
+      <thead><tr><th>Skill</th><th>O que faz</th></tr></thead>
+      <tbody>
+        <tr><td>/setup-empresa</td><td>Configura o perfil do negocio (primeiro comando)</td></tr>
+        <tr><td>/briefing-cliente</td><td>Coleta info e gera briefing padronizado</td></tr>
+        <tr><td>/criar-criativo</td><td>Cria copy + briefing visual para ads</td></tr>
+        <tr><td>/criar-carrossel</td><td>Carrossel completo: copy + design + render</td></tr>
+        <tr><td>/criar-imagem</td><td>Renderiza HTML em PNG via Playwright</td></tr>
+        <tr><td>/gerar-imagem-ia</td><td>Gera imagem com IA via OpenRouter</td></tr>
+        <tr><td>/design-template</td><td>Seleciona e personaliza templates visuais</td></tr>
+        <tr><td>/design-canva</td><td>Cria e preenche designs no Canva</td></tr>
+        <tr><td>/buscar-imagem</td><td>Busca imagens na web ou captura screenshots</td></tr>
+        <tr><td>/report-semanal</td><td>Relatorio de performance automatico</td></tr>
+        <tr><td>/publicar-instagram</td><td>Publica carrosseis no Instagram</td></tr>
+        <tr><td>/publicar-social</td><td>Publica em multiplas redes sociais</td></tr>
+        <tr><td>/enviar-email</td><td>Envia emails via Resend</td></tr>
+        <tr><td>/scraping</td><td>Extracao de dados web via Apify</td></tr>
+      </tbody>
+    </table>
   </div>
 </section>
 
-<!-- ═══ LAUNCH ═══ -->
-<section id="run">
-  <div class="container">
-    <div class="section-label">06 — Launch</div>
-    <h2 class="section-title gradient-text">Primeira execucao</h2>
-    <p class="section-subtitle" style="margin-bottom:1.5rem">Se voce rodou o script de setup, a key ja esta salva. So abrir.</p>
-
-    <div class="os-switcher" data-group="run">
-      <button class="os-btn active" onclick="switchOS(this,'run-win')">Windows</button>
-      <button class="os-btn" onclick="switchOS(this,'run-mac')">macOS / Linux</button>
-    </div>
-    <div id="run-win" class="os-panel active">
-      <div class="code-block">
-        <div class="code-header"><span class="code-lang">powershell</span><span class="code-os">windows</span></div>
-        <div class="code-body"><pre><span class="c"># Entrar na pasta do projeto</span>
-cd "$HOME\Desktop\minha-empresa"
-
-<span class="c"># Iniciar</span>
-openclaude --bare</pre></div>
-      </div>
-
-      <div class="alert alert-info">
-        <div class="alert-icon">Manual</div>
-        <div class="alert-body">
-          Se nao usou o script de setup, configure manualmente:<br>
-          <code>$env:CLAUDE_CODE_USE_OPENAI="1"</code><br>
-          <code>$env:OPENAI_BASE_URL="https://openrouter.ai/api/v1"</code><br>
-          <code>$env:OPENAI_API_KEY="sk-or-SUA-KEY"</code><br>
-          <code>$env:OPENAI_MODEL="openrouter/free"</code>
-        </div>
-      </div>
-    </div>
-    <div id="run-mac" class="os-panel">
-      <div class="code-block">
-        <div class="code-header"><span class="code-lang">bash</span><span class="code-os">macos / linux</span></div>
-        <div class="code-body"><pre><span class="c"># Entrar na pasta do projeto</span>
-cd ~/Desktop/minha-empresa
-
-<span class="c"># Iniciar</span>
-openclaude --bare</pre></div>
-      </div>
-
-      <div class="alert alert-info">
-        <div class="alert-icon">Manual</div>
-        <div class="alert-body">
-          Se nao usou o script de setup, configure manualmente:<br>
-          <code>export CLAUDE_CODE_USE_OPENAI=1</code><br>
-          <code>export OPENAI_BASE_URL=https://openrouter.ai/api/v1</code><br>
-          <code>export OPENAI_API_KEY=sk-or-SUA-KEY</code><br>
-          <code>export OPENAI_MODEL=openrouter/free</code>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ PROVIDERS ═══ -->
+<!-- PROVIDERS -->
 <section id="providers">
   <div class="container">
-    <div class="section-label">PS — Providers</div>
-    <h2 class="section-title gradient-text">Escolha seu provider</h2>
-    <p class="section-subtitle" style="margin-bottom:2.5rem">Voce nao precisa ficar preso a um unico provider. Centralize tudo em uma plataforma ou misture.</p>
+    <div class="section-label">03 — Provider</div>
+    <h2 class="section-title gradient-text">OpenRouter — 1 key, 200+ modelos</h2>
+    <p class="section-subtitle" style="margin-bottom:2.5rem">Uma conta, uma API key. Acesso a GPT-4o, Claude, Gemini, DeepSeek, Llama, Mistral. O script ja configura tudo.</p>
 
     <div class="grid-cards">
-      <div class="grid-card">
-        <div class="card-num mono">Gratis</div>
-        <h3>Ollama (Local)</h3>
-        <p>100% na sua maquina. Sem API key, sem custo, sem enviar dados. Ideal pra comecar e pra privacidade total.</p>
-      </div>
-      <div class="grid-card">
-        <div class="card-num mono">Recomendado</div>
-        <h3>OpenRouter</h3>
-        <p>1 conta, 1 API key, 200+ modelos: GPT-4o, Claude, Gemini, DeepSeek, Llama, Mistral. Hub unico. Crie a key em <strong>openrouter.ai/keys</strong></p>
-      </div>
-      <div class="grid-card">
-        <div class="card-num mono">Alternativa</div>
-        <h3>Apify</h3>
-        <p>Para scraping, extracao de dados e automacao web. Combinado com Ollama ou OpenRouter, cobre 100% das necessidades.</p>
-      </div>
-      <div class="grid-card">
-        <div class="card-num mono">Direto</div>
-        <h3>OpenAI / DeepSeek</h3>
-        <p>Se ja tem API key da OpenAI ou DeepSeek, use direto sem intermediario. Funciona com qualquer endpoint /v1.</p>
-      </div>
+      <div class="grid-card"><div class="card-num mono">Padrao</div><h3>openrouter/free</h3><p>Router inteligente que escolhe o melhor modelo gratuito disponivel automaticamente. Custo zero.</p></div>
+      <div class="grid-card"><div class="card-num mono">Upgrade</div><h3>Modelos pagos</h3><p>Com creditos no OpenRouter, use GPT-4o, Claude Sonnet, Gemini Pro. A partir de $1.</p></div>
+      <div class="grid-card"><div class="card-num mono">Local</div><h3>Ollama (opcional)</h3><p>Se quiser rodar 100% local sem internet, instale Ollama separadamente e aponte o endpoint.</p></div>
     </div>
 
-    <div class="alert alert-info" style="margin-top:2rem">
-      <div class="alert-icon">Dica</div>
-      <div class="alert-body">
-        <strong>Estrategia recomendada:</strong> Use <strong>Ollama local</strong> pro router (@cos) e tarefas rapidas (custo zero). Use <strong>OpenRouter</strong> pros agentes criativos (@copy, @cmo, @traffic) que precisam de qualidade alta. Melhor custo-beneficio possivel.
-      </div>
+    <h3 style="font-size:1rem;color:var(--accent);margin:2.5rem 0 1rem">Se ja rodou o setup, so abrir</h3>
+    <div class="os-switcher">
+      <button class="os-btn active" onclick="switchOS(this,'r-win')">Windows</button>
+      <button class="os-btn" onclick="switchOS(this,'r-mac')">macOS / Linux</button>
     </div>
-
-    <h3 style="font-size:1rem;color:var(--accent);margin:2.5rem 0 1rem">Configuracao rapida — OpenRouter</h3>
-
-    <div class="os-switcher" data-group="provider">
-      <button class="os-btn active" onclick="switchOS(this,'prov-win')">Windows</button>
-      <button class="os-btn" onclick="switchOS(this,'prov-mac')">macOS / Linux</button>
-    </div>
-    <div id="prov-win" class="os-panel active">
+    <div id="r-win" class="os-panel active">
       <div class="code-block">
-        <div class="code-header"><span class="code-lang">powershell</span><span class="code-os">openrouter</span></div>
-        <div class="code-body"><pre><span class="c"># Uma key, todos os modelos</span>
-$env:CLAUDE_CODE_USE_OPENAI="1"
+        <div class="code-header"><span>powershell</span><span class="os-tag">reabrir</span></div>
+        <div class="code-body"><pre><span class="c"># A key ja esta salva em .claude/settings.json</span>
+cd "$HOME\Desktop\minha-empresa"
+openclaude --bare</pre></div>
+      </div>
+    </div>
+    <div id="r-mac" class="os-panel">
+      <div class="code-block">
+        <div class="code-header"><span>bash</span><span class="os-tag">reabrir</span></div>
+        <div class="code-body"><pre><span class="c"># A key ja esta salva em .claude/settings.json</span>
+cd ~/Desktop/minha-empresa
+openclaude --bare</pre></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TROUBLESHOOT -->
+<section id="troubleshoot">
+  <div class="container">
+    <div class="section-label">04 — Troubleshooting</div>
+    <h2 class="section-title gradient-text">Deu erro?</h2>
+
+    <table class="data-table">
+      <thead><tr><th>Erro</th><th>Causa</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr><td>Terminal congela</td><td>Usando Git Bash no Windows</td><td style="color:var(--accent)">Use PowerShell</td></tr>
+        <tr><td>Terminal congela</td><td>MCP servers do Claude Code travando</td><td style="color:var(--accent)">Use --bare</td></tr>
+        <tr><td>ripgrep ENOENT</td><td>rg nao instalado</td><td style="color:var(--accent)">winget install BurntSushi.ripgrep.MSVC</td></tr>
+        <tr><td>command not found</td><td>PATH nao atualizado</td><td style="color:var(--accent)">Fechar e reabrir o terminal</td></tr>
+        <tr><td>401 invalid key</td><td>Key errada</td><td style="color:var(--accent)">Confira em openrouter.ai/keys</td></tr>
+        <tr><td>402 no credits</td><td>Modelo pago sem credito</td><td style="color:var(--accent)">Use openrouter/free ou compre creditos</td></tr>
+        <tr><td>429 rate limit</td><td>Muitas requests no modelo free</td><td style="color:var(--accent)">Espere 1 min ou troque pra modelo pago</td></tr>
+        <tr><td>400 invalid model</td><td>ID do modelo errado</td><td style="color:var(--accent)">Use openrouter/free como padrao</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:1rem;color:var(--accent);margin:2.5rem 0 1rem">Configuracao manual (se nao usou o script)</h3>
+    <div class="os-switcher">
+      <button class="os-btn active" onclick="switchOS(this,'m-win')">Windows</button>
+      <button class="os-btn" onclick="switchOS(this,'m-mac')">macOS / Linux</button>
+    </div>
+    <div id="m-win" class="os-panel active">
+      <div class="code-block">
+        <div class="code-header"><span>powershell</span><span class="os-tag">manual</span></div>
+        <div class="code-body"><pre>$env:CLAUDE_CODE_USE_OPENAI="1"
 $env:OPENAI_BASE_URL="https://openrouter.ai/api/v1"
-$env:OPENAI_API_KEY="sk-or-SUA-KEY-OPENROUTER"
+$env:OPENAI_API_KEY="sk-or-SUA-KEY"
 $env:OPENAI_MODEL="openrouter/free"
-
 openclaude --bare</pre></div>
       </div>
     </div>
-    <div id="prov-mac" class="os-panel">
+    <div id="m-mac" class="os-panel">
       <div class="code-block">
-        <div class="code-header"><span class="code-lang">bash</span><span class="code-os">openrouter</span></div>
-        <div class="code-body"><pre><span class="c"># Uma key, todos os modelos</span>
-export CLAUDE_CODE_USE_OPENAI=1
+        <div class="code-header"><span>bash</span><span class="os-tag">manual</span></div>
+        <div class="code-body"><pre>export CLAUDE_CODE_USE_OPENAI=1
 export OPENAI_BASE_URL=https://openrouter.ai/api/v1
-export OPENAI_API_KEY=sk-or-SUA-KEY-OPENROUTER
+export OPENAI_API_KEY=sk-or-SUA-KEY
 export OPENAI_MODEL=openrouter/free
-
 openclaude --bare</pre></div>
       </div>
     </div>
-
-    <h3 style="font-size:1rem;color:var(--accent);margin:2rem 0 1rem">Comparativo de custo</h3>
-    <table class="data-table">
-      <thead><tr><th>Modo</th><th>Router</th><th>Agentes</th><th>Custo/mes</th></tr></thead>
-      <tbody>
-        <tr><td>Local</td><td>Ollama 3b</td><td>Ollama 7b</td><td style="color:var(--success)">R$0</td></tr>
-        <tr style="background:var(--glow-strong)"><td>OpenRouter</td><td>Ollama 3b</td><td>Gemini + DeepSeek + GPT-4o-mini</td><td style="color:var(--accent)">~R$5</td></tr>
-        <tr><td>Hibrido</td><td>Ollama 3b</td><td>OpenRouter + Ollama</td><td>~R$3</td></tr>
-        <tr><td>Performance</td><td>Ollama 3b</td><td>GPT-4o + Claude + DeepSeek</td><td>~R$30</td></tr>
-        <tr><td>Direto OpenAI</td><td>Ollama 3b</td><td>GPT-4o-mini</td><td>~R$10</td></tr>
-        <tr><td>Direto DeepSeek</td><td>Ollama 3b</td><td>DeepSeek v3</td><td>~R$2</td></tr>
-      </tbody>
-    </table>
   </div>
 </section>
 
-<!-- ═══ MCP FIX ═══ -->
-<section id="fix">
-  <div class="container">
-    <div class="section-label">07 — Known Issues</div>
-    <h2 class="section-title gradient-text">Corrigir travamento por MCP</h2>
-
-    <div class="alert alert-danger">
-      <div class="alert-icon">Blocker</div>
-      <div class="alert-body">
-        Se voce ja usa o Claude Code, o OpenClaude le a mesma config em <code>~/.claude/settings.json</code> e tenta conectar em <strong>todos os MCP servers</strong>. Servers que precisam de auth ou estao offline travam a inicializacao.
-      </div>
-    </div>
-
-    <div class="arch-stack" style="margin-top:2rem">
-      <div class="arch-layer">
-        <div class="bar"></div>
-        <div>
-          <div class="layer-label">Solucao A</div>
-          <div class="layer-desc">Usar <code style="font-family:'JetBrains Mono';font-size:0.82rem;color:var(--accent)">--bare</code> — pula MCPs, hooks, plugins, prefetches</div>
-        </div>
-        <div class="layer-metric">rapido</div>
-      </div>
-      <div class="arch-layer">
-        <div class="bar"></div>
-        <div>
-          <div class="layer-label">Solucao B</div>
-          <div class="layer-desc">Settings separado: <code style="font-family:'JetBrains Mono';font-size:0.82rem;color:var(--accent)">openclaude --settings ~/.openclaude-settings.json</code></div>
-        </div>
-        <div class="layer-metric">definitivo</div>
-      </div>
-    </div>
-
-    <div class="code-block" style="margin-top:1.5rem">
-      <div class="code-header"><span class="code-lang">terminal</span><span class="code-os">criar settings limpo</span></div>
-      <div class="code-body"><pre><span class="c"># Windows PowerShell</span>
-'{"mcpServers":{}}' | Out-File -Encoding utf8 "$HOME\.openclaude-settings.json"
-
-<span class="c"># macOS / Linux</span>
-echo '{"mcpServers":{}}' > ~/.openclaude-settings.json
-
-<span class="c"># Rodar com settings limpo</span>
-openclaude --settings ~/.openclaude-settings.json</pre></div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ VSCODE ═══ -->
-<section id="vscode">
-  <div class="container">
-    <div class="section-label">08 — VSCode Extension</div>
-    <h2 class="section-title gradient-text">Extensao VSCode</h2>
-    <p class="section-subtitle" style="margin-bottom:2.5rem">Control Center na sidebar, launch inteligente, tema dark.</p>
-
-    <h3 style="font-size:1rem;color:var(--accent);margin-bottom:1rem">8.1 — Instalar manualmente</h3>
-
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">terminal</span><span class="code-os">ambos</span></div>
-      <div class="code-body"><pre><span class="c"># Clonar o repo (se ainda nao clonou)</span>
-git clone https://github.com/Gitlawb/openclaude.git
-cd openclaude/vscode-extension/openclaude-vscode
-
-<span class="c"># Empacotar a extensao</span>
-npx @vscode/vsce package --no-dependencies
-
-<span class="c"># Instalar o .vsix</span>
-code --install-extension openclaude-vscode-0.1.1.vsix</pre></div>
-    </div>
-
-    <h3 style="font-size:1rem;color:var(--accent);margin:2.5rem 0 1rem">8.2 — Configurar</h3>
-    <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:1rem"><code style="font-family:'JetBrains Mono';font-size:0.82rem">Ctrl+,</code> &rarr; buscar "openclaude"</p>
-
-    <table class="data-table">
-      <thead>
-        <tr><th>Setting</th><th>Valor</th><th>Descricao</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>launchCommand</td><td style="color:var(--accent)">openclaude --bare</td><td>Comando de launch (--bare se tiver MCPs)</td></tr>
-        <tr><td>terminalName</td><td style="color:var(--accent)">OpenClaude</td><td>Nome da aba do terminal</td></tr>
-        <tr><td>useOpenAIShim</td><td style="color:var(--accent)">true</td><td>Injeta CLAUDE_CODE_USE_OPENAI=1</td></tr>
-      </tbody>
-    </table>
-
-    <h3 style="font-size:1rem;color:var(--accent);margin:2.5rem 0 1rem">8.3 — Comandos</h3>
-    <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:1rem"><code style="font-family:'JetBrains Mono';font-size:0.82rem">Ctrl+Shift+P</code> &rarr; buscar "OpenClaude"</p>
-
-    <table class="data-table">
-      <thead><tr><th>Comando</th><th>Acao</th></tr></thead>
-      <tbody>
-        <tr><td>Launch in Terminal</td><td>Abre no terminal integrado (cwd do editor ativo)</td></tr>
-        <tr><td>Launch in Workspace Root</td><td>Abre na raiz do workspace</td></tr>
-        <tr><td>Open Control Center</td><td>Abre o painel lateral</td></tr>
-        <tr><td>Open Workspace Profile</td><td>Abre .openclaude-profile.json</td></tr>
-        <tr><td>Open Repository</td><td>Abre o GitHub do projeto</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<!-- ═══ TROUBLESHOOTING ═══ -->
+<!-- CHECKLIST -->
 <section>
   <div class="container">
-    <div class="section-label">09 — Troubleshooting</div>
-    <h2 class="section-title gradient-text">Problemas conhecidos</h2>
-
-    <table class="data-table">
-      <thead><tr><th>Sintoma</th><th>Causa</th><th>Fix</th></tr></thead>
-      <tbody>
-        <tr>
-          <td>Terminal congela ao abrir</td>
-          <td>Git Bash (mintty) no Windows</td>
-          <td style="color:var(--accent)">Use PowerShell ou CMD</td>
-        </tr>
-        <tr>
-          <td>Terminal congela ao abrir</td>
-          <td>MCP servers travando init</td>
-          <td style="color:var(--accent)">Use --bare ou settings limpo</td>
-        </tr>
-        <tr>
-          <td>Ripgrep ENOENT</td>
-          <td>rg nao instalado no sistema</td>
-          <td style="color:var(--accent)">winget install BurntSushi.ripgrep.MSVC</td>
-        </tr>
-        <tr>
-          <td>command not found</td>
-          <td>PATH nao atualizado</td>
-          <td style="color:var(--accent)">Fechar e reabrir o terminal</td>
-        </tr>
-        <tr>
-          <td>Connection refused :11434</td>
-          <td>Ollama server nao rodando</td>
-          <td style="color:var(--accent)">Verificar system tray / ollama serve</td>
-        </tr>
-        <tr>
-          <td>401 invalid key</td>
-          <td>API key definida com Ollama</td>
-          <td style="color:var(--accent)">NAO defina OPENAI_API_KEY para Ollama</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="code-block" style="margin-top:2rem">
-      <div class="code-header"><span class="code-lang">debug</span><span class="code-os">avancado</span></div>
-      <div class="code-body"><pre><span class="c"># Gerar log de debug completo</span>
-openclaude --debug-file ~/openclaude-debug.log
-
-<span class="c"># Procure por:</span>
-<span class="c"># "ENOENT" — binarios faltando</span>
-<span class="c"># "timeout" — servers travados</span>
-<span class="c"># "Skipping connection" — MCPs com auth pendente</span></pre></div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ COMMANDS ═══ -->
-<section>
-  <div class="container">
-    <div class="section-label">10 — Reference</div>
-    <h2 class="section-title gradient-text">Comandos uteis</h2>
-
-    <h3 style="font-size:1rem;color:var(--accent);margin-bottom:1rem">OpenClaude CLI</h3>
-    <table class="data-table">
-      <thead><tr><th>Comando</th><th>Descricao</th></tr></thead>
-      <tbody>
-        <tr><td style="font-family:'JetBrains Mono'">openclaude</td><td>Sessao interativa</td></tr>
-        <tr><td style="font-family:'JetBrains Mono'">openclaude --bare</td><td>Sem MCPs/hooks/plugins</td></tr>
-        <tr><td style="font-family:'JetBrains Mono'">openclaude -p "prompt"</td><td>Modo nao-interativo (print e sai)</td></tr>
-        <tr><td style="font-family:'JetBrains Mono'">openclaude --debug-file log</td><td>Gerar log de debug</td></tr>
-        <tr><td style="font-family:'JetBrains Mono'">/provider</td><td>Setup de provider dentro do app</td></tr>
-        <tr><td style="font-family:'JetBrains Mono'">/help</td><td>Ajuda dentro do app</td></tr>
-      </tbody>
-    </table>
-
-    <h3 style="font-size:1rem;color:var(--accent);margin:2rem 0 1rem">Ollama</h3>
-    <table class="data-table">
-      <thead><tr><th>Comando</th><th>Descricao</th></tr></thead>
-      <tbody>
-        <tr><td style="font-family:'JetBrains Mono'">ollama list</td><td>Modelos instalados</td></tr>
-        <tr><td style="font-family:'JetBrains Mono'">ollama pull &lt;model&gt;</td><td>Baixar modelo</td></tr>
-        <tr><td style="font-family:'JetBrains Mono'">ollama rm &lt;model&gt;</td><td>Remover modelo</td></tr>
-        <tr><td style="font-family:'JetBrains Mono'">ollama run &lt;model&gt;</td><td>Chat direto</td></tr>
-        <tr><td style="font-family:'JetBrains Mono'">ollama serve</td><td>Iniciar server</td></tr>
-        <tr><td style="font-family:'JetBrains Mono'">ollama ps</td><td>Modelos em execucao</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<!-- ═══ CHECKLIST ═══ -->
-<section>
-  <div class="container">
-    <div class="section-label">Final — Verification</div>
+    <div class="section-label">Final</div>
     <h2 class="section-title gradient-text">Checklist</h2>
-
     <ul class="checklist">
-      <li>Node.js v20+ instalado &mdash; <code>node --version</code></li>
-      <li>OpenClaude instalado &mdash; <code>openclaude --version</code></li>
-      <li>ripgrep instalado &mdash; <code>rg --version</code></li>
-      <li>Ollama instalado e server rodando &mdash; <code>ollama --version</code></li>
-      <li>Modelo baixado &mdash; <code>ollama list</code> mostra qwen2.5-coder:7b</li>
-      <li>Variaveis de ambiente configuradas (CLAUDE_CODE_USE_OPENAI, OPENAI_BASE_URL, OPENAI_MODEL)</li>
-      <li><code>openclaude --bare</code> abre sem travar</li>
-      <li>Extensao VSCode instalada (opcional)</li>
+      <li>Key do OpenRouter criada em <code>openrouter.ai/keys</code></li>
+      <li>Script rodou sem erro</li>
+      <li>Pasta <code>minha-empresa</code> criada na Area de Trabalho</li>
+      <li>OpenClaude abriu</li>
+      <li>Digitou <code>/setup-empresa</code> dentro do OpenClaude</li>
     </ul>
   </div>
 </section>
 
-<!-- ═══ FOOTER ═══ -->
 <footer>
-  <div class="footer-brand">OPENCLAUDE SETUP GUIDE</div>
-  <div class="footer-sub">
-    Baseado em diagnostico real de instalacao &mdash; 08.04.2026<br>
-    <a href="https://github.com/Gitlawb/openclaude" target="_blank">github.com/Gitlawb/openclaude</a>
+  <div class="footer-brand">CLAUDEFREE — Kit Piloto Automatico v29.9</div>
+  <div style="font-size:.75rem;color:var(--text-dim)">
+    <a href="https://github.com/aifunnels/claudefree" target="_blank">github.com/aifunnels/claudefree</a>
   </div>
 </footer>
 
 <script>
-function switchOS(btn, panelId) {
-  const group = btn.parentElement;
-  group.querySelectorAll('.os-btn').forEach(b => b.classList.remove('active'));
+function switchOS(btn,id){
+  const g=btn.parentElement;
+  g.querySelectorAll('.os-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-
-  let el = group.nextElementSibling;
-  while (el && el.classList.contains('os-panel')) {
-    el.classList.remove('active');
-    el = el.nextElementSibling;
-  }
-  document.getElementById(panelId)?.classList.add('active');
+  let el=g.nextElementSibling;
+  while(el&&el.classList.contains('os-panel')){el.classList.remove('active');el=el.nextElementSibling}
+  document.getElementById(id)?.classList.add('active');
 }
-
-// Scroll-based animations
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.style.opacity = '1';
-      entry.target.style.transform = 'translateY(0)';
-    }
-  });
-}, { threshold: 0.1 });
-
-document.querySelectorAll('.grid-card, .arch-layer, .pipeline-step').forEach(el => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(16px)';
-  el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-  observer.observe(el);
-});
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.style.opacity='1';x.target.style.transform='translateY(0)'}})},{threshold:.1});
+document.querySelectorAll('.grid-card,.arch-layer').forEach(el=>{el.style.opacity='0';el.style.transform='translateY(16px)';el.style.transition='opacity .5s ease,transform .5s ease';obs.observe(el)});
 </script>
 
 </body>
