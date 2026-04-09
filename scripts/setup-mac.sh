@@ -5,7 +5,7 @@
 set -e
 
 ok()   { echo -e "  \033[0;32m[OK]\033[0m $1"; }
-fail() { echo -e "  \033[0;31m[ERRO]\033[0m $1"; }
+fail() { echo -e "  \033[0;31m[ERRO]\033[0m $1"; exit 1; }
 info() { echo -e "  \033[0;33m$1\033[0m"; }
 step() { echo -e "\n  \033[0;36m--- $1. $2 ---\033[0m"; }
 
@@ -20,35 +20,48 @@ if command -v node &>/dev/null; then
     NV=$(node --version)
     M=$(echo "$NV" | sed 's/v\([0-9]*\).*/\1/')
     if [ "$M" -ge 20 ]; then ok "Node.js $NV"
-    else fail "Node.js $NV antigo. Baixe v20+ em nodejs.org"; exit 1; fi
+    else
+        info "Node.js $NV antigo, atualizando..."
+        if command -v brew &>/dev/null; then brew install node@22
+        elif command -v apt &>/dev/null; then curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - && sudo apt install -y nodejs
+        else fail "Atualize Node.js manualmente: nodejs.org"; fi
+        ok "Node.js $(node --version)"
+    fi
 else
     info "Instalando Node.js..."
     if command -v brew &>/dev/null; then brew install node@22
     elif command -v apt &>/dev/null; then curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - && sudo apt install -y nodejs
     elif command -v dnf &>/dev/null; then sudo dnf install -y nodejs
-    else fail "Instale Node.js 20+: nodejs.org"; exit 1; fi
-    ok "Node.js $(node --version)"
+    elif command -v pacman &>/dev/null; then sudo pacman -S --noconfirm nodejs npm
+    else
+        info "Baixando Node.js direto..."
+        curl -fsSL https://nodejs.org/dist/v22.15.0/node-v22.15.0-linux-x64.tar.xz -o /tmp/node.tar.xz
+        sudo tar -xf /tmp/node.tar.xz -C /usr/local --strip-components=1
+        rm /tmp/node.tar.xz
+    fi
+    command -v node &>/dev/null && ok "Node.js $(node --version)" || fail "Node.js nao instalou. Baixe em nodejs.org"
 fi
 
 # 2. OPENCLAUDE
 step "2" "OpenClaude"
 if command -v openclaude &>/dev/null; then ok "OpenClaude $(openclaude --version 2>/dev/null)"
 else
-    info "Instalando OpenClaude..."
-    npm install -g @gitlawb/openclaude
-    ok "OpenClaude instalado"
+    info "Instalando OpenClaude (1-2 min)..."
+    npm install -g @gitlawb/openclaude 2>/dev/null
+    command -v openclaude &>/dev/null && ok "OpenClaude instalado" || fail "Falha. Tente: sudo npm install -g @gitlawb/openclaude"
 fi
 
 # 3. RIPGREP
 step "3" "ripgrep"
-if command -v rg &>/dev/null; then ok "ripgrep instalado"
+if command -v rg &>/dev/null; then ok "ripgrep"
 else
     info "Instalando ripgrep..."
     if command -v brew &>/dev/null; then brew install ripgrep
     elif command -v apt &>/dev/null; then sudo apt install -y ripgrep
     elif command -v dnf &>/dev/null; then sudo dnf install -y ripgrep
-    else fail "Instale ripgrep manualmente"; exit 1; fi
-    ok "ripgrep"
+    elif command -v pacman &>/dev/null; then sudo pacman -S --noconfirm ripgrep
+    else info "Instale ripgrep manualmente: github.com/BurntSushi/ripgrep"; fi
+    command -v rg &>/dev/null && ok "ripgrep" || info "ripgrep pode precisar reabrir o terminal"
 fi
 
 # 4. API KEY
@@ -57,21 +70,24 @@ echo ""
 echo -e "  \033[0;97mCrie sua key gratis em: https://openrouter.ai/keys\033[0m"
 echo ""
 read -p "  Cole a key aqui: " KEY
-if [ -z "$KEY" ]; then fail "Sem key. Rode o script de novo quando tiver."; exit 1; fi
+[ -z "$KEY" ] && fail "Sem key. Rode o script de novo quando tiver."
 
 info "Testando conexao..."
-HTTP=$(curl -s -o /tmp/or-test.json -w "%{http_code}" \
+HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
     -X POST "https://openrouter.ai/api/v1/chat/completions" \
     -H "Authorization: Bearer $KEY" \
     -H "Content-Type: application/json" \
     -d '{"model":"openrouter/free","messages":[{"role":"user","content":"OK"}]}' \
-    --max-time 30 2>/dev/null)
-rm -f /tmp/or-test.json
+    --max-time 30 2>/dev/null || echo "000")
 
-if [ "$HTTP" = "200" ]; then ok "Key funcionando!"
-elif [ "$HTTP" = "402" ]; then fail "Key sem creditos. Acesse openrouter.ai/settings/credits"; exit 1
-elif [ "$HTTP" = "401" ]; then fail "Key invalida. Confira em openrouter.ai/keys"; exit 1
-else fail "Erro HTTP $HTTP. Verifique sua key."; exit 1; fi
+case "$HTTP" in
+    200) ok "Key funcionando!" ;;
+    401) fail "Key invalida. Confira em openrouter.ai/keys" ;;
+    402) info "Key sem creditos pagos — funciona com modelos free. Continuando..." ;;
+    429) info "Rate limit — key valida. Continuando..." ;;
+    000) info "Timeout — continuando mesmo assim..." ;;
+    *)   info "HTTP $HTTP — continuando..." ;;
+esac
 
 # 5. KIT PA
 step "5" "Kit Piloto Automatico"
@@ -84,14 +100,15 @@ if [ -d "$PROJ" ]; then
     info "Pasta minha-empresa ja existe. Atualizando settings..."
 else
     info "Baixando Kit PA..."
-    rm -rf /tmp/claudefree-dl
+    rm -rf /tmp/claudefree-dl 2>/dev/null
     git clone --depth 1 https://github.com/aifunnels/claudefree.git /tmp/claudefree-dl
     KIT="/tmp/claudefree-dl/kit"
+    [ ! -d "$KIT" ] && fail "Falha ao baixar. Verifique conexao."
 
     mkdir -p "$PROJ"
     cp "$KIT/CLAUDE.md" "$PROJ/"
     for d in .claude conhecimento prompts templates nichos docs clientes; do
-        cp -r "$KIT/$d" "$PROJ/"
+        [ -d "$KIT/$d" ] && cp -r "$KIT/$d" "$PROJ/"
     done
     mkdir -p "$PROJ/config" "$PROJ/output"
 
@@ -102,13 +119,13 @@ else
         sn=$(basename "$sd")
         [ -f "$sd/SKILL.md" ] && cp "$sd/SKILL.md" "$PROJ/.agent/workflows/$sn.md"
     done
-    cp "$PROJ/CLAUDE.md" "$PROJ/.agent/rules/main.md"
+    cp "$PROJ/CLAUDE.md" "$PROJ/.agent/rules/main.md" 2>/dev/null || true
 
     rm -rf /tmp/claudefree-dl
     ok "14 agentes + 14 skills + 50 prompts"
 fi
 
-# Salvar settings com a key
+# Salvar settings
 mkdir -p "$PROJ/.claude"
 cat > "$PROJ/.claude/settings.json" << EOF
 {
@@ -121,14 +138,13 @@ cat > "$PROJ/.claude/settings.json" << EOF
   "mcpServers": {}
 }
 EOF
-ok "Key salva em .claude/settings.json"
+ok "Key salva"
 
 export CLAUDE_CODE_USE_OPENAI=1
 export OPENAI_BASE_URL=https://openrouter.ai/api/v1
 export OPENAI_API_KEY="$KEY"
 export OPENAI_MODEL=openrouter/free
 
-# PRONTO
 echo ""
 echo -e "  \033[0;32m========================================\033[0m"
 echo -e "    \033[0;32mPRONTO!\033[0m"
