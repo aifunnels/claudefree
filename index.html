@@ -999,6 +999,7 @@ ollama run qwen2.5-coder:7b "Write a hello world in Python"
   <div class="container">
     <div class="section-label">06 — Launch</div>
     <h2 class="section-title gradient-text">Primeira execucao</h2>
+    <p class="section-subtitle" style="margin-bottom:1.5rem">Se voce rodou o script de setup, a key ja esta salva. So abrir.</p>
 
     <div class="os-switcher" data-group="run">
       <button class="os-btn active" onclick="switchOS(this,'run-win')">Windows</button>
@@ -1007,39 +1008,42 @@ ollama run qwen2.5-coder:7b "Write a hello world in Python"
     <div id="run-win" class="os-panel active">
       <div class="code-block">
         <div class="code-header"><span class="code-lang">powershell</span><span class="code-os">windows</span></div>
-        <div class="code-body"><pre><span class="c"># Configurar provider</span>
-$env:CLAUDE_CODE_USE_OPENAI="1"
-$env:OPENAI_BASE_URL="http://localhost:11434/v1"
-$env:OPENAI_MODEL="qwen2.5-coder:7b"
+        <div class="code-body"><pre><span class="c"># Entrar na pasta do projeto</span>
+cd "$HOME\Desktop\minha-empresa"
 
-<span class="c"># Iniciar (com --bare pra pular MCPs)</span>
+<span class="c"># Iniciar</span>
 openclaude --bare</pre></div>
       </div>
 
       <div class="alert alert-info">
-        <div class="alert-icon">Tip</div>
+        <div class="alert-icon">Manual</div>
         <div class="alert-body">
-          Para tornar permanente, adicione ao perfil do PowerShell:<br>
-          <code>notepad $PROFILE</code> e cole as 3 linhas de <code>$env:</code> acima.
+          Se nao usou o script de setup, configure manualmente:<br>
+          <code>$env:CLAUDE_CODE_USE_OPENAI="1"</code><br>
+          <code>$env:OPENAI_BASE_URL="https://openrouter.ai/api/v1"</code><br>
+          <code>$env:OPENAI_API_KEY="sk-or-SUA-KEY"</code><br>
+          <code>$env:OPENAI_MODEL="deepseek/deepseek-chat-v3-0324"</code>
         </div>
       </div>
     </div>
     <div id="run-mac" class="os-panel">
       <div class="code-block">
         <div class="code-header"><span class="code-lang">bash</span><span class="code-os">macos / linux</span></div>
-        <div class="code-body"><pre><span class="c"># Configurar provider</span>
-export CLAUDE_CODE_USE_OPENAI=1
-export OPENAI_BASE_URL=http://localhost:11434/v1
-export OPENAI_MODEL=qwen2.5-coder:7b
+        <div class="code-body"><pre><span class="c"># Entrar na pasta do projeto</span>
+cd ~/Desktop/minha-empresa
 
 <span class="c"># Iniciar</span>
-openclaude</pre></div>
+openclaude --bare</pre></div>
       </div>
 
       <div class="alert alert-info">
-        <div class="alert-icon">Tip</div>
+        <div class="alert-icon">Manual</div>
         <div class="alert-body">
-          Para tornar permanente, adicione as 3 linhas de <code>export</code> ao <code>~/.zshrc</code> (macOS) ou <code>~/.bashrc</code> (Linux).
+          Se nao usou o script de setup, configure manualmente:<br>
+          <code>export CLAUDE_CODE_USE_OPENAI=1</code><br>
+          <code>export OPENAI_BASE_URL=https://openrouter.ai/api/v1</code><br>
+          <code>export OPENAI_API_KEY=sk-or-SUA-KEY</code><br>
+          <code>export OPENAI_MODEL=deepseek/deepseek-chat-v3-0324</code>
         </div>
       </div>
     </div>

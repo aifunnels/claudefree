@@ -1,8 +1,8 @@
 # ============================================================
 #  CLAUDEFREE — Setup One-Shot (Windows)
-#  UMA LINHA instala tudo: OpenClaude + Ollama + Modelo + Kit PA
+#  UMA LINHA: instala OpenClaude + Kit PA + configura OpenRouter
 #
-#  Uso:
+#  Uso (PowerShell):
 #    irm https://raw.githubusercontent.com/aifunnels/claudefree/master/scripts/setup-windows.ps1 | iex
 # ============================================================
 
@@ -10,10 +10,9 @@ $ErrorActionPreference = "Stop"
 
 function Write-Step($num, $text) {
     Write-Host ""
-    Write-Host "  [$num/7] $text" -ForegroundColor Cyan
+    Write-Host "  [$num/5] $text" -ForegroundColor Cyan
     Write-Host "  $('-' * 50)" -ForegroundColor DarkGray
 }
-
 function Write-Ok($text) { Write-Host "    [OK] $text" -ForegroundColor Green }
 function Write-Skip($text) { Write-Host "    [SKIP] $text" -ForegroundColor Yellow }
 function Write-Fail($text) { Write-Host "    [FAIL] $text" -ForegroundColor Red }
@@ -22,15 +21,14 @@ function Write-Fail($text) { Write-Host "    [FAIL] $text" -ForegroundColor Red 
 Write-Host ""
 Write-Host "  ================================================" -ForegroundColor White
 Write-Host "    CLAUDEFREE — Setup Automatico" -ForegroundColor White
-Write-Host "    OpenClaude + Ollama + Kit Piloto Automatico" -ForegroundColor DarkGray
+Write-Host "    OpenClaude + Kit Piloto Automatico + OpenRouter" -ForegroundColor DarkGray
 Write-Host "  ================================================" -ForegroundColor White
 Write-Host ""
-Write-Host "  IMPORTANTE: Execute este script no PowerShell" -ForegroundColor Yellow
-Write-Host "  NAO use Git Bash (causa travamento)" -ForegroundColor Yellow
+Write-Host "  Use PowerShell (NAO Git Bash)" -ForegroundColor Yellow
 Write-Host ""
 
 # ── Step 1: Node.js ──
-Write-Step "1" "Verificando Node.js..."
+Write-Step "1" "Node.js..."
 
 $nodeVersion = $null
 try { $nodeVersion = (node --version 2>$null) } catch {}
@@ -38,140 +36,68 @@ try { $nodeVersion = (node --version 2>$null) } catch {}
 if ($nodeVersion) {
     $major = [int]($nodeVersion -replace 'v(\d+)\..*', '$1')
     if ($major -ge 20) {
-        Write-Ok "Node.js $nodeVersion encontrado"
+        Write-Ok "Node.js $nodeVersion"
     } else {
-        Write-Fail "Node.js $nodeVersion muito antigo (precisa v20+)"
-        Write-Host "    Baixe em: https://nodejs.org/" -ForegroundColor Yellow
+        Write-Fail "Node.js $nodeVersion muito antigo (precisa v20+). Baixe em nodejs.org"
         exit 1
     }
 } else {
-    Write-Host "    Node.js nao encontrado. Instalando via winget..." -ForegroundColor Yellow
+    Write-Host "    Instalando Node.js..." -ForegroundColor Yellow
     winget install OpenJS.NodeJS.LTS --accept-source-agreements --accept-package-agreements
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-    try {
-        $nodeVersion = (node --version 2>$null)
-        Write-Ok "Node.js $nodeVersion instalado"
-    } catch {
-        Write-Fail "Falha ao instalar Node.js. Instale manualmente: https://nodejs.org/"
-        exit 1
-    }
+    try { $nodeVersion = (node --version 2>$null); Write-Ok "Node.js $nodeVersion" }
+    catch { Write-Fail "Instale Node.js manualmente: nodejs.org"; exit 1 }
 }
 
-# ── Step 2: Git ──
-Write-Step "2" "Verificando Git..."
+# ── Step 2: OpenClaude + ripgrep + Git ──
+Write-Step "2" "OpenClaude + dependencias..."
 
+# Git
 $gitOk = $false
 try { git --version 2>$null | Out-Null; $gitOk = $true } catch {}
-
-if ($gitOk) {
-    Write-Ok "Git encontrado"
-} else {
+if (-not $gitOk) {
     Write-Host "    Instalando Git..." -ForegroundColor Yellow
     winget install Git.Git --accept-source-agreements --accept-package-agreements
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-    Write-Ok "Git instalado"
 }
+Write-Ok "Git"
 
-# ── Step 3: OpenClaude + ripgrep ──
-Write-Step "3" "Verificando OpenClaude + ripgrep..."
-
+# OpenClaude
 $ocVersion = $null
 try { $ocVersion = (openclaude --version 2>$null) } catch {}
-
 if ($ocVersion) {
-    Write-Ok "OpenClaude $ocVersion encontrado"
+    Write-Ok "OpenClaude $ocVersion"
 } else {
     Write-Host "    Instalando OpenClaude..." -ForegroundColor Yellow
     npm install -g @gitlawb/openclaude
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-    try {
-        $ocVersion = (openclaude --version 2>$null)
-        Write-Ok "OpenClaude $ocVersion instalado"
-    } catch {
-        Write-Fail "Falha ao instalar OpenClaude"
-        exit 1
-    }
+    try { $ocVersion = (openclaude --version 2>$null); Write-Ok "OpenClaude $ocVersion" }
+    catch { Write-Fail "Falha ao instalar OpenClaude"; exit 1 }
 }
 
 # ripgrep
-$rgVersion = $null
-try { $rgVersion = (rg --version 2>$null | Select-Object -First 1) } catch {}
-
-if ($rgVersion) {
-    Write-Ok "ripgrep encontrado"
-} else {
+try { rg --version 2>$null | Out-Null; Write-Ok "ripgrep" } catch {
     Write-Host "    Instalando ripgrep..." -ForegroundColor Yellow
     winget install BurntSushi.ripgrep.MSVC --accept-source-agreements --accept-package-agreements
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-    Write-Ok "ripgrep instalado"
+    Write-Ok "ripgrep"
 }
 
-# ── Step 4: Ollama ──
-Write-Step "4" "Verificando Ollama..."
-
-$ollamaOk = $false
-try { $ollamaVersion = (ollama --version 2>$null); if ($ollamaVersion) { $ollamaOk = $true } } catch {}
-if (-not $ollamaOk) {
-    $ollamaPath = "$env:LOCALAPPDATA\Programs\Ollama\ollama.exe"
-    if (Test-Path $ollamaPath) { $ollamaOk = $true }
-}
-
-if ($ollamaOk) {
-    Write-Ok "Ollama instalado"
-} else {
-    Write-Host "    Instalando Ollama (~1.8 GB)..." -ForegroundColor Yellow
-    winget install Ollama.Ollama --accept-source-agreements --accept-package-agreements
-    Write-Ok "Ollama instalado"
-    Start-Sleep -Seconds 10
-}
-
-# Server check
-$serverOk = $false
-try { Invoke-RestMethod -Uri "http://localhost:11434/api/tags" -TimeoutSec 5 | Out-Null; $serverOk = $true } catch {}
-if (-not $serverOk) {
-    Write-Host "    Iniciando Ollama server..." -ForegroundColor Yellow
-    Start-Process -FilePath "ollama" -ArgumentList "serve" -WindowStyle Hidden
-    Start-Sleep -Seconds 5
-    try { Invoke-RestMethod -Uri "http://localhost:11434/api/tags" -TimeoutSec 5 | Out-Null; $serverOk = $true } catch {}
-}
-if ($serverOk) { Write-Ok "Ollama server rodando" } else { Write-Fail "Ollama server nao iniciou. Verifique o system tray." }
-
-# ── Step 5: Modelo ──
-Write-Step "5" "Verificando modelo qwen2.5-coder:7b..."
-
-$modelExists = $false
-try {
-    $models = Invoke-RestMethod -Uri "http://localhost:11434/api/tags" -TimeoutSec 5
-    foreach ($m in $models.models) { if ($m.name -eq "qwen2.5-coder:7b") { $modelExists = $true } }
-} catch {}
-
-if ($modelExists) {
-    Write-Ok "Modelo qwen2.5-coder:7b encontrado"
-} else {
-    Write-Host "    Baixando modelo qwen2.5-coder:7b (~4.7 GB)..." -ForegroundColor Yellow
-    Write-Host "    Isso pode levar alguns minutos..." -ForegroundColor DarkGray
-    ollama pull qwen2.5-coder:7b
-    Write-Ok "Modelo baixado"
-}
-
-# ── Step 6: Criar projeto + Kit PA ──
-Write-Step "6" "Criando projeto com Kit Piloto Automatico..."
+# ── Step 3: Kit PA na Area de Trabalho ──
+Write-Step "3" "Kit Piloto Automatico..."
 
 $projectName = "minha-empresa"
 $desktopPath = [System.Environment]::GetFolderPath("Desktop")
 $projectDir = Join-Path $desktopPath $projectName
 
 if (Test-Path $projectDir) {
-    Write-Skip "Pasta $projectName ja existe"
+    Write-Skip "Pasta $projectName ja existe na Area de Trabalho"
 } else {
-    Write-Host "    Clonando Kit PA..." -ForegroundColor Yellow
+    Write-Host "    Baixando Kit PA..." -ForegroundColor Yellow
     git clone --depth 1 https://github.com/aifunnels/claudefree.git "$env:TEMP\claudefree-dl"
-
-    # Create project directory
-    New-Item -ItemType Directory -Path $projectDir -Force | Out-Null
-
-    # Copy kit contents into project root
     $kitSource = "$env:TEMP\claudefree-dl\kit"
+
+    New-Item -ItemType Directory -Path $projectDir -Force | Out-Null
     Copy-Item "$kitSource\CLAUDE.md" "$projectDir\CLAUDE.md"
     Copy-Item -Recurse "$kitSource\.claude" "$projectDir\.claude"
     Copy-Item -Recurse "$kitSource\conhecimento" "$projectDir\conhecimento"
@@ -180,91 +106,109 @@ if (Test-Path $projectDir) {
     Copy-Item -Recurse "$kitSource\nichos" "$projectDir\nichos"
     Copy-Item -Recurse "$kitSource\docs" "$projectDir\docs"
     Copy-Item -Recurse "$kitSource\clientes" "$projectDir\clientes"
-
-    # Create empty dirs
     foreach ($dir in @("config", "output")) {
         New-Item -ItemType Directory -Path "$projectDir\$dir" -Force | Out-Null
     }
 
-    # Clean settings (no MCPs)
-    $settingsContent = @'
+    # Antigravity .agent/
+    New-Item -ItemType Directory -Path "$projectDir\.agent\skills" -Force | Out-Null
+    New-Item -ItemType Directory -Path "$projectDir\.agent\rules" -Force | Out-Null
+    New-Item -ItemType Directory -Path "$projectDir\.agent\workflows" -Force | Out-Null
+    Copy-Item -Recurse "$projectDir\.claude\agents\*" "$projectDir\.agent\skills\" -Force
+    Get-ChildItem "$projectDir\.claude\skills" -Directory | ForEach-Object {
+        $sf = Join-Path $_.FullName "SKILL.md"
+        if (Test-Path $sf) { Copy-Item $sf "$projectDir\.agent\workflows\$($_.Name).md" -Force }
+    }
+    Copy-Item "$projectDir\CLAUDE.md" "$projectDir\.agent\rules\main.md" -Force
+
+    Remove-Item -Recurse -Force "$env:TEMP\claudefree-dl" 2>$null
+    Write-Ok "14 agentes + 14 skills + 50 prompts + 3 nichos"
+    Write-Ok "VSCode / Cursor / Antigravity"
+}
+
+# ── Step 4: OpenRouter API Key ──
+Write-Step "4" "Configurando OpenRouter..."
+
+Write-Host ""
+Write-Host "    Crie sua key GRATIS em: https://openrouter.ai/keys" -ForegroundColor White
+Write-Host "    (10 dolares de credito gratis no primeiro cadastro)" -ForegroundColor DarkGray
+Write-Host ""
+
+$orKey = Read-Host "    Cole sua OpenRouter API key aqui"
+
+if ([string]::IsNullOrWhiteSpace($orKey)) {
+    Write-Fail "Nenhuma key inserida. Configure manualmente depois."
+    Write-Host ""
+    Write-Host '    $env:CLAUDE_CODE_USE_OPENAI="1"' -ForegroundColor DarkGray
+    Write-Host '    $env:OPENAI_BASE_URL="https://openrouter.ai/api/v1"' -ForegroundColor DarkGray
+    Write-Host '    $env:OPENAI_API_KEY="sua-key"' -ForegroundColor DarkGray
+    Write-Host '    $env:OPENAI_MODEL="deepseek/deepseek-chat-v3-0324"' -ForegroundColor DarkGray
+} else {
+    # Set for this session
+    $env:CLAUDE_CODE_USE_OPENAI = "1"
+    $env:OPENAI_BASE_URL = "https://openrouter.ai/api/v1"
+    $env:OPENAI_API_KEY = $orKey
+    $env:OPENAI_MODEL = "deepseek/deepseek-chat-v3-0324"
+
+    # Save to settings.json so OpenClaude always picks it up
+    $settingsContent = @"
 {
+  "env": {
+    "CLAUDE_CODE_USE_OPENAI": "1",
+    "OPENAI_BASE_URL": "https://openrouter.ai/api/v1",
+    "OPENAI_API_KEY": "$orKey",
+    "OPENAI_MODEL": "deepseek/deepseek-chat-v3-0324"
+  },
   "agentModels": {},
   "agentRouting": {},
   "mcpServers": {}
 }
-'@
+"@
     Set-Content -Path "$projectDir\.claude\settings.json" -Value $settingsContent -Encoding UTF8
 
-    # ── Antigravity support (.agent/ convention) ──
-    New-Item -ItemType Directory -Path "$projectDir\.agent\skills" -Force | Out-Null
-    New-Item -ItemType Directory -Path "$projectDir\.agent\rules" -Force | Out-Null
-    New-Item -ItemType Directory -Path "$projectDir\.agent\workflows" -Force | Out-Null
-
-    # Agents -> .agent/skills/
-    Copy-Item -Recurse "$projectDir\.claude\agents\*" "$projectDir\.agent\skills\" -Force
-
-    # Skills -> .agent/workflows/
-    Get-ChildItem "$projectDir\.claude\skills" -Directory | ForEach-Object {
-        $skillFile = Join-Path $_.FullName "SKILL.md"
-        if (Test-Path $skillFile) {
-            Copy-Item $skillFile "$projectDir\.agent\workflows\$($_.Name).md" -Force
-        }
-    }
-
-    # CLAUDE.md -> .agent/rules/
-    Copy-Item "$projectDir\CLAUDE.md" "$projectDir\.agent\rules\main.md" -Force
-
-    Write-Ok "Antigravity (.agent/) configurado"
-
-    # Cleanup
-    Remove-Item -Recurse -Force "$env:TEMP\claudefree-dl" 2>$null
-
-    Write-Ok "Projeto criado na Area de Trabalho: $projectDir"
-    Write-Ok "14 agentes + 14 skills + 50 prompts + 3 nichos"
-    Write-Ok "Compativel com: VSCode, Cursor, Antigravity"
+    Write-Ok "OpenRouter configurado (DeepSeek v3)"
+    Write-Ok "Key salva em .claude/settings.json"
 }
 
-# ── Step 7: Configurar provider ──
-Write-Step "7" "Escolha seu provider..."
+# ── Step 5: Testar conexao ──
+Write-Step "5" "Testando conexao..."
 
-Write-Host ""
-Write-Host "    [1] Ollama local (gratis, ja instalado)" -ForegroundColor White
-Write-Host "    [2] OpenRouter (1 key = 200+ modelos)" -ForegroundColor White
-Write-Host "    [3] Configurar depois" -ForegroundColor DarkGray
-Write-Host ""
+if (-not [string]::IsNullOrWhiteSpace($orKey)) {
+    try {
+        $testBody = @{
+            model = "deepseek/deepseek-chat-v3-0324"
+            messages = @(@{ role = "user"; content = "Responda apenas: OK" })
+            max_tokens = 5
+        } | ConvertTo-Json -Depth 3
 
-$choice = Read-Host "    Escolha (1/2/3)"
+        $testResponse = Invoke-RestMethod -Uri "https://openrouter.ai/api/v1/chat/completions" `
+            -Method POST `
+            -Headers @{ "Authorization" = "Bearer $orKey"; "Content-Type" = "application/json" } `
+            -Body $testBody `
+            -TimeoutSec 15
 
-switch ($choice) {
-    "2" {
-        $orKey = Read-Host "    Cole sua OpenRouter API key (openrouter.ai/keys)"
-        $env:CLAUDE_CODE_USE_OPENAI = "1"
-        $env:OPENAI_BASE_URL = "https://openrouter.ai/api/v1"
-        $env:OPENAI_API_KEY = $orKey
-        $env:OPENAI_MODEL = "deepseek/deepseek-chat-v3-0324"
-        Write-Ok "OpenRouter configurado (DeepSeek v3 como padrao)"
+        Write-Ok "Conexao com OpenRouter funcionando!"
+    } catch {
+        Write-Fail "Erro na conexao. Verifique sua API key."
+        Write-Host "    Erro: $($_.Exception.Message)" -ForegroundColor DarkGray
     }
-    default {
-        $env:CLAUDE_CODE_USE_OPENAI = "1"
-        $env:OPENAI_BASE_URL = "http://localhost:11434/v1"
-        $env:OPENAI_MODEL = "qwen2.5-coder:7b"
-        Write-Ok "Ollama local configurado"
-    }
+} else {
+    Write-Skip "Sem key — teste pulado"
 }
 
 # ── Final ──
 Write-Host ""
 Write-Host "  ================================================" -ForegroundColor Green
-Write-Host "    SETUP COMPLETO" -ForegroundColor Green
+Write-Host "    PRONTO!" -ForegroundColor Green
 Write-Host "  ================================================" -ForegroundColor Green
 Write-Host ""
-Write-Host "  Proximos passos:" -ForegroundColor White
-Write-Host "    cd "$desktopPath\$projectName"" -ForegroundColor Cyan
+Write-Host "  Agora faca:" -ForegroundColor White
+Write-Host ""
+Write-Host "    cd `"$projectDir`"" -ForegroundColor Cyan
 Write-Host "    openclaude --bare" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "  Dentro do OpenClaude, digite:" -ForegroundColor White
+Write-Host "  Dentro do OpenClaude:" -ForegroundColor White
 Write-Host "    /setup-empresa" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "  Seu time de 14 agentes IA esta pronto." -ForegroundColor DarkGray
+Write-Host "  14 agentes IA prontos. Boa sorte." -ForegroundColor DarkGray
 Write-Host ""
