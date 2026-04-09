@@ -142,13 +142,13 @@ if ([string]::IsNullOrWhiteSpace($orKey)) {
     Write-Host '    $env:CLAUDE_CODE_USE_OPENAI="1"' -ForegroundColor DarkGray
     Write-Host '    $env:OPENAI_BASE_URL="https://openrouter.ai/api/v1"' -ForegroundColor DarkGray
     Write-Host '    $env:OPENAI_API_KEY="sua-key"' -ForegroundColor DarkGray
-    Write-Host '    $env:OPENAI_MODEL="deepseek/deepseek-chat-v3-0324"' -ForegroundColor DarkGray
+    Write-Host '    $env:OPENAI_MODEL="qwen/qwen3-coder:free"' -ForegroundColor DarkGray
 } else {
     # Set for this session
     $env:CLAUDE_CODE_USE_OPENAI = "1"
     $env:OPENAI_BASE_URL = "https://openrouter.ai/api/v1"
     $env:OPENAI_API_KEY = $orKey
-    $env:OPENAI_MODEL = "deepseek/deepseek-chat-v3-0324"
+    $env:OPENAI_MODEL = "qwen/qwen3-coder:free"
 
     # Save to settings.json so OpenClaude always picks it up
     $settingsContent = @"
@@ -157,7 +157,7 @@ if ([string]::IsNullOrWhiteSpace($orKey)) {
     "CLAUDE_CODE_USE_OPENAI": "1",
     "OPENAI_BASE_URL": "https://openrouter.ai/api/v1",
     "OPENAI_API_KEY": "$orKey",
-    "OPENAI_MODEL": "deepseek/deepseek-chat-v3-0324"
+    "OPENAI_MODEL": "qwen/qwen3-coder:free"
   },
   "agentModels": {},
   "agentRouting": {},
@@ -166,7 +166,7 @@ if ([string]::IsNullOrWhiteSpace($orKey)) {
 "@
     Set-Content -Path "$projectDir\.claude\settings.json" -Value $settingsContent -Encoding UTF8
 
-    Write-Ok "OpenRouter configurado (DeepSeek v3)"
+    Write-Ok "OpenRouter configurado (Qwen3 Coder — GRATIS)"
     Write-Ok "Key salva em .claude/settings.json"
 }
 
@@ -176,7 +176,7 @@ Write-Step "5" "Testando conexao..."
 if (-not [string]::IsNullOrWhiteSpace($orKey)) {
     try {
         $testBody = @{
-            model = "deepseek/deepseek-chat-v3-0324"
+            model = "qwen/qwen3-coder:free"
             messages = @(@{ role = "user"; content = "Responda apenas: OK" })
             max_tokens = 5
         } | ConvertTo-Json -Depth 3

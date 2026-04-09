@@ -129,12 +129,12 @@ if [ -z "$OR_KEY" ]; then
     echo -e "    ${D}export CLAUDE_CODE_USE_OPENAI=1${N}"
     echo -e "    ${D}export OPENAI_BASE_URL=https://openrouter.ai/api/v1${N}"
     echo -e "    ${D}export OPENAI_API_KEY=sua-key${N}"
-    echo -e "    ${D}export OPENAI_MODEL=deepseek/deepseek-chat-v3-0324${N}"
+    echo -e "    ${D}export OPENAI_MODEL=qwen/qwen3-coder:free${N}"
 else
     export CLAUDE_CODE_USE_OPENAI=1
     export OPENAI_BASE_URL=https://openrouter.ai/api/v1
     export OPENAI_API_KEY="$OR_KEY"
-    export OPENAI_MODEL=deepseek/deepseek-chat-v3-0324
+    export OPENAI_MODEL=qwen/qwen3-coder:free
 
     cat > "$PROJECT_DIR/.claude/settings.json" << SETTINGS_EOF
 {
@@ -142,7 +142,7 @@ else
     "CLAUDE_CODE_USE_OPENAI": "1",
     "OPENAI_BASE_URL": "https://openrouter.ai/api/v1",
     "OPENAI_API_KEY": "$OR_KEY",
-    "OPENAI_MODEL": "deepseek/deepseek-chat-v3-0324"
+    "OPENAI_MODEL": "qwen/qwen3-coder:free"
   },
   "agentModels": {},
   "agentRouting": {},
@@ -150,7 +150,7 @@ else
 }
 SETTINGS_EOF
 
-    ok "OpenRouter configurado (DeepSeek v3)"
+    ok "OpenRouter configurado (Qwen3 Coder — GRATIS)"
     ok "Key salva em .claude/settings.json"
 fi
 
@@ -162,7 +162,7 @@ if [ -n "$OR_KEY" ]; then
         -X POST "https://openrouter.ai/api/v1/chat/completions" \
         -H "Authorization: Bearer $OR_KEY" \
         -H "Content-Type: application/json" \
-        -d '{"model":"deepseek/deepseek-chat-v3-0324","messages":[{"role":"user","content":"Responda apenas: OK"}],"max_tokens":5}' \
+        -d '{"model":"qwen/qwen3-coder:free","messages":[{"role":"user","content":"Responda apenas: OK"}],"max_tokens":5}' \
         --max-time 15 2>/dev/null)
 
     if [ "$RESPONSE" = "200" ]; then
